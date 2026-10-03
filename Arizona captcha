@@ -3,54 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arizona RP — Тренировка Ловли Капчи</title>
+    <title>Arizona Captcha Trainer Pro</title>
     <style>
-        /* Стиль в темных тонах лаунчера Аризоны */
         body {
             background-color: #121214;
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
-
         .container {
             background-color: #1a1a1e;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
             text-align: center;
-            border: 2px solid #fc6600; /* Фирменный оранжевый цвет */
-            width: 400px;
+            border: 2px solid #fc6600;
+            width: 380px;
         }
-
         h1 {
             color: #fc6600;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-transform: uppercase;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+            letter-spacing: 1px;
         }
-
-        /* Окно капчи как в игре */
-        .captcha-window {
+        .captcha-box {
             background-color: #0b0b0c;
             border: 2px solid #3a3a42;
             border-radius: 6px;
-            padding: 15px;
-            font-size: 36px;
+            padding: 12px;
+            font-size: 38px;
             font-weight: bold;
-            letter-spacing: 8px;
-            color: #1ae61a; /* Зеленый цвет цифр */
+            letter-spacing: 6px;
+            color: #1ae61a;
             margin-bottom: 20px;
             user-select: none;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        input[type="text"] {
-            width: 80%;
+        /* Стиль для скрытой капчи */
+        .captcha-box.hidden {
+            color: #3a3a42;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        input {
+            width: 85%;
             padding: 12px;
             font-size: 18px;
             border-radius: 6px;
@@ -59,122 +63,143 @@
             color: #fff;
             text-align: center;
             outline: none;
-            transition: 0.2s;
         }
-
-        input[type="text"]:focus {
+        input:focus {
             border-color: #fc6600;
         }
-
         .stats {
             margin-top: 20px;
-            font-size: 16px;
-            text-align: left;
+            font-size: 15px;
             background: #222227;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
+            text-align: left;
         }
-
-        .stats p {
-            margin: 5px 0;
-        }
-
-        .info-text {
-            font-size: 12px;
+        .stats p { margin: 6px 0; }
+        .hint {
+            font-size: 11px;
             color: #777;
             margin-top: 15px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Arizona Captcha</h1>
-    <div class="captcha-window" id="captchaBox">N/A</div>
-    <input type="text" id="captchaInput" placeholder="Введите капчу..." autocomplete="off" autofocus>
+    <h1>ARIZONA ловлЯ</h1>
+    <div class="captcha-box hidden" id="captchaBox">Нажмите N для старта</div>
+    <input type="text" id="captchaInput" placeholder="Ожидание нажатия N..." autocomplete="off" disabled>
     
     <div class="stats">
-        <p>Результат: <strong id="resultText" style="color: #777;">Ожидание</strong></p>
+        <p>Результат: <strong id="resText" style="color: #888;">Ожидание</strong></p>
         <p>Время ввода: <strong id="timeText" style="color: #fc6600;">0.000 сек</strong></p>
-        <p>Верных капч подряд: <strong id="streakText" style="color: #1ae61a;">0</strong></p>
+        <p>Серия верных: <strong id="streakText" style="color: #1ae61a;">0</strong></p>
     </div>
-    
-    <div class="info-text">Нажмите Enter или пробел для подтверждения. Для сброса нажмите Esc.</div>
+    <div class="hint">
+        1. Нажмите <strong>N</strong> (англ.), чтобы открыть капчу.<br>
+        2. Введите цифры и нажмите <strong>Enter / Пробел</strong>.<br>
+        3. Нажмите <strong>Esc</strong> для полного сброса.
+    </div>
 </div>
 
 <script>
-    const captchaBox = document.getElementById('captchaBox');
-    const captchaInput = document.getElementById('captchaInput');
-    const resultText = document.getElementById('resultText');
-    const timeText = document.getElementById('timeText');
-    const streakText = document.getElementById('streakText');
+    const box = document.getElementById('captchaBox');
+    const input = document.getElementById('captchaInput');
+    const res = document.getElementById('resText');
+    const time = document.getElementById('timeText');
+    const streakElement = document.getElementById('streakText');
 
-    let currentCaptcha = '';
-    let startTime = 0;
-    let isTyping = false;
-    let streak = 0;
+    let current = '', start = 0, isActive = false, streak = 0;
 
-    // Генерация случайной 5-значной капчи (как в SAMP)
-    function generateCaptcha() {
-        let captcha = '';
-        for (let i = 0; i < 5; i++) {
-            captcha += Math.floor(Math.random() * 10);
-        }
-        currentCaptcha = captcha;
-        captchaBox.innerText = captcha;
-        captchaInput.value = '';
-        isTyping = false;
+    // Функция для генерации звуков без сторонних файлов
+    function playSound(type) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            if (type === 'success') {
+                osc.frequency.setValueAtTime(880, ctx.currentTime); // Высокий звук
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.stop(ctx.currentTime + 0.15);
+            } else if (type === 'fail') {
+                osc.frequency.setValueAtTime(150, ctx.currentTime); // Низкий звук ошибки
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.stop(ctx.currentTime + 0.3);
+            }
+        } catch (e) { console.log('Аудио не поддерживается до клика'); }
     }
 
-    // Отслеживание ввода
-    captchaInput.addEventListener('input', () => {
-        if (!isTyping && captchaInput.value.length > 0) {
-            startTime = performance.now(); // Точный запуск таймера с миллисекундами
-            isTyping = true;
+    function resetToWaiting() {
+        current = '';
+        box.innerText = 'Нажмите N для старта';
+        box.classList.add('hidden');
+        input.value = '';
+        input.placeholder = 'Ожидание нажатия N...';
+        input.disabled = true;
+        isActive = false;
+        window.focus(); 
+    }
+
+    // Слушаем нажатие N по всему экрану
+    document.addEventListener('keydown', (e) => {
+        if (!isActive && (e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т')) {
+            e.preventDefault();
+            
+            // Генерируем капчу и активируем инпут
+            current = Math.floor(10000 + Math.random() * 90000).toString();
+            box.innerText = current;
+            box.classList.remove('hidden');
+            
+            input.disabled = false;
+            input.placeholder = 'Вводите капчу...';
+            input.focus();
+            
+            start = performance.now(); // Время пошло сразу после нажатия N!
+            isActive = true;
+        }
+
+        if (e.key === 'Escape') {
+            resetToWaiting();
+            res.innerText = 'Сброшено';
+            res.style.color = '#888';
         }
     });
 
-    // Обработка клавиш
-    captchaInput.addEventListener('keydown', (e) => {
-        // Подтверждение на Enter или Пробел
+    // Обработка ввода капчи
+    input.addEventListener('keydown', (e) => {
+        if (!isActive) return;
+
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            verifyCaptcha();
-        }
-        // Сброс на Escape
-        if (e.key === 'Escape') {
-            generateCaptcha();
-            resultText.innerText = 'Сброшено';
-            resultText.style.color = '#777';
+            
+            const diff = ((performance.now() - start) / 1000).toFixed(3);
+            
+            if (input.value.trim() === current) {
+                res.innerText = 'Успешно поймал!';
+                res.style.color = '#1ae61a';
+                time.innerText = diff + ' сек';
+                streak++;
+                playSound('success');
+            } else {
+                res.innerText = 'Неверный ввод!';
+                res.style.color = '#ff3333';
+                time.innerText = '0.000 сек';
+                streak = 0;
+                playSound('fail');
+            }
+            
+            streakElement.innerText = streak;
+            resetToWaiting();
         }
     });
-
-    // Проверка правильности
-    function verifyCaptcha() {
-        if (!isTyping) return;
-        
-        const endTime = performance.now();
-        const timeTaken = ((endTime - startTime) / 1000).toFixed(3); // Переводим в секунды (0.000)
-        
-        if (captchaInput.value.trim() === currentCaptcha) {
-            resultText.innerText = 'Успешно поймал!';
-            resultText.style.color = '#1ae61a';
-            timeText.innerText = `${timeTaken} сек`;
-            streak++;
-        } else {
-            resultText.innerText = 'Неверный ввод!';
-            resultText.style.color = '#ff3333';
-            timeText.innerText = `0.000 сек`;
-            streak = 0;
-        }
-        
-        streakText.innerText = streak;
-        generateCaptcha();
-    }
-
-    // Инициализация при первой загрузке
-    generateCaptcha();
 </script>
-
 </body>
 </html>
