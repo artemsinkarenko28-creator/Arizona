@@ -3,203 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игровое Меню</title>
+    <title>Игровое Меню сайта</title>
     <style>
+        /* Базовые стили для страницы сайта */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e24;
-            color: #fff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #141419;
+            color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        .hint {
+        .welcome-text {
             text-align: center;
-            font-size: 18px;
-            color: #aaaaaa;
-            margin-top: 50px;
+            font-size: 20px;
+            color: #8a8a98;
         }
 
-        .hint strong {
+        /* Кнопка-подсказка на экране */
+        .hint-key {
+            display: inline-block;
+            background: #22222a;
             color: #00ff88;
-            background: #2a2a35;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #444;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            animation: pulse 2s infinite;
         }
 
-        /* Стили для всплывающего окна (модалки) */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* ТЕМНЫЙ ФОН ЗА ОКНОМ (БЛЮР) */
         .modal-overlay {
-            display: none; /* По умолчанию скрыто */
+            display: none; /* Изначально скрыто */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
+        /* Класс для плавной анимации появления */
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* ОКНО ИГРОВОГО МЕНЮ */
         .menu-window {
-            background: #2a2a35;
-            width: 500px;
-            border-radius: 12px;
+            background: #1e1e24;
+            width: 480px;
+            border-radius: 16px;
             border: 2px solid #00ff88;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.25);
             overflow: hidden;
+            transform: scale(0.85);
+            transition: transform 0.25s ease;
         }
 
-        /* Шапка меню */
+        .modal-overlay.active .menu-window {
+            transform: scale(1);
+        }
+
+        /* ШАПКА МЕНЮ */
         .menu-header {
-            background: #22222a;
-            padding: 15px 20px;
+            background: #16161a;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #444;
+            border-bottom: 1px solid #2d2d38;
         }
 
         .menu-header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 22px;
+            letter-spacing: 1px;
             color: #00ff88;
+            text-transform: uppercase;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: #ff4d4d;
-            font-size: 24px;
+            font-size: 32px;
+            line-height: 20px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: color 0.2s, transform 0.2s;
         }
 
         .close-btn:hover {
-            transform: scale(1.2);
+            color: #ff1a1a;
+            transform: scale(1.1);
         }
 
-        /* Контент меню */
+        /* КОНТЕНТ МЕНЮ */
         .menu-body {
-            padding: 20px;
+            padding: 25px;
         }
 
+        /* БЛОК БАЛАНСА */
         .balance-box {
-            background: #1e1e24;
-            padding: 15px;
-            border-radius: 8px;
+            background: #111114;
+            padding: 18px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
-            border: 1px solid #3a3a4a;
+            margin-bottom: 25px;
+            border: 1px solid #2d2d38;
         }
 
         .balance-box span {
             color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
-        /* Сетка разделов (Казино, Скины, Рамки) */
+        /* СЕТКА С КНОПКАМИ РАЗДЕЛОВ */
         .sections-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
+        /* КАРТОЧКА РАЗДЕЛА */
         .section-card {
-            background: #333344;
+            background: #25252e;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            transition: 0.3s;
-            border: 1px solid transparent;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            border: 1px solid #333344;
         }
 
         .section-card:hover {
-            background: #3d3d52;
+            background: #2d2d3a;
             border-color: #00ff88;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
         .section-card h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             font-size: 18px;
+            color: #ffffff;
         }
 
         .section-card p {
             margin: 0;
-            font-size: 12px;
-            color: #aaa;
+            font-size: 13px;
+            color: #a0a0b0;
+        }
+        
+        /* Рамка для кастомизации (пример вызова внутри) */
+        .section-card.premium {
+            border-color: #ff00ff;
+        }
+        .section-card.premium:hover {
+            border-color: #ff00ff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <div class="hint">
-        Нажмите клавишу <strong>N</strong> на клавиатуре, чтобы открыть/закрыть игровое меню.
+    <!-- Контент самого сайта (задний план) -->
+    <div class="welcome-text">
+        <p>Добро пожаловать на игровой сайт!</p>
+        <p>Чтобы открыть личный кабинет с балансом и магазином, нажмите:</p>
+        <div class="hint-key">Клавишу N</div>
     </div>
 
-    <!-- Модальное окно меню -->
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО МЕНЮ (MODAL) -->
     <div class="modal-overlay" id="menuModal">
         <div class="menu-window">
             
+            <!-- Шапка -->
             <div class="menu-header">
-                <h2>ИГРОВОЙ ХАБ</h2>
+                <h2>Личный Кабинет</h2>
                 <button class="close-btn" id="closeBtn">&times;</button>
             </div>
 
+            <!-- Внутреннее содержимое -->
             <div class="menu-body">
-                <!-- Блок баланса -->
+                
+                <!-- Отображение Баланса -->
                 <div class="balance-box">
-                    Ваш баланс: <span id="balanceValue">15,050</span> 💎
+                    Баланс: <span id="balanceValue">50,000</span> 💎
                 </div>
 
-                <!-- Разделы -->
+                <!-- Кнопки функционала сайта -->
                 <div class="sections-grid">
-                    <div class="section-card" onclick="alert('Открываем Казино...')">
+                    
+                    <!-- Кнопка Казино -->
+                    <div class="section-card" onclick="openCasino()">
                         <h3>🎰 Казино</h3>
-                        <p>Слоты, рулетка, краш</p>
+                        <p>Слоты и рулетка</p>
                     </div>
-                    <div class="section-card" onclick="alert('Открываем Магазин скинов...')">
+
+                    <!-- Кнопка Скинов -->
+                    <div class="section-card" onclick="openSkins()">
                         <h3>🎨 Скины</h3>
-                        <p>Оружие, одежда, эффекты</p>
+                        <p>Магазин кастомизации</p>
                     </div>
-                    <div class="section-card" onclick="alert('Открываем Настройки рамок...')">
+
+                    <!-- Кнопка Рамок -->
+                    <div class="section-card premium" onclick="openFrames()">
                         <h3>🖼️ Рамки профиля</h3>
-                        <p>Кастомизация аватара</p>
+                        <p>Эксклюзивные обводки</p>
                     </div>
-                    <div class="section-card" onclick="alert('Открываем Ежедневные бонусы...')">
-                        <h3>🎁 Бонусы</h3>
-                        <p>Бесплатные монеты каждый день</p>
+
+                    <!-- Кнопка Настроек/Выхода -->
+                    <div class="section-card" onclick="toggleMenu()">
+                        <h3>❌ Закрыть</h3>
+                        <p>Вернуться на сайт</p>
                     </div>
+
                 </div>
             </div>
 
         </div>
     </div>
 
+    <!-- ЛОГИКА РАБОТЫ (JAVASCRIPT) -->
     <script>
         const modal = document.getElementById('menuModal');
         const closeBtn = document.getElementById('closeBtn');
+        const balanceValue = document.getElementById('balanceValue');
 
-        // Функция открыть/закрыть меню
+        // Глобальная переменная баланса игрока
+        let currentBalance = 50000;
+
+        // Переключатель видимости меню
         function toggleMenu() {
-            if (modal.style.display === 'flex') {
-                modal.style.display = 'none';
+            if (modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                // Задержка скрытия display, чтобы успела отработать анимация CSS
+                setTimeout(() => { modal.style.display = 'none'; }, 250);
             } else {
                 modal.style.display = 'flex';
+                // Небольшой таймаут, чтобы анимация запустилась корректно
+                setTimeout(() => { modal.classList.add('active'); }, 10);
             }
         }
 
-        // 1. Отслеживаем нажатие клавиши N
+        // 1. ОТСЛЕЖИВАНИЕ НАЖАТИЯ КЛАВИШИ N
         document.addEventListener('keydown', function(event) {
-            // Проверяем, что нажата именно "n" или "N" (работает и на русской раскладке "т")
+            // event.key.toLowerCase() отлавливает и английскую "n", и русскую "т"
             if (event.key.toLowerCase() === 'n' || event.key.toLowerCase() === 'т') {
                 
-                // Если пользователь пишет в каком-то поле ввода (input/textarea), меню не должно открываться
+                // Предотвращаем открытие, если пользователь пишет текст в input или textarea
                 if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
                     return;
                 }
@@ -208,15 +282,46 @@
             }
         });
 
-        // 2. Закрытие по крестику
+        // 2. ЗАКРЫТИЕ ПО КЛИКУ НА КРЕСТИК
         closeBtn.addEventListener('click', toggleMenu);
 
-        // 3. Закрытие при клике на темную область вокруг меню
+        // 3. ЗАКРЫТИЕ ПРИ КЛИКЕ НА ТЕМНУЮ ОБЛАСТЬ (МИМО ОКНА)
         modal.addEventListener('click', function(event) {
             if (event.target === modal) {
                 toggleMenu();
             }
         });
+
+        // --- ФУНКЦИИ ИГРОВЫХ КНОПОК ---
+
+        function openCasino() {
+            // Пример игры в казино: списываем 500 и даем шанс выиграть
+            if (currentBalance < 500) {
+                alert("Недостаточно алмазов для ставки!");
+                return;
+            }
+            
+            currentBalance -= 500;
+            let win = Math.random() > 0.5; // 50% шанс победы
+            
+            if (win) {
+                currentBalance += 1500;
+                alert("🎰 Вы выиграли 1,500 💎! (Ставка 500 списана)");
+            } else {
+                alert("🎰 Увы, вы проиграли 500 💎.");
+            }
+            
+            // Обновляем текст баланса на экране
+            balanceValue.textContent = currentBalance.toLocaleString();
+        }
+
+        function openSkins() {
+            alert("🎨 Открывается каталог скинов! Здесь будет выбор ваших моделей.");
+        }
+
+        function openFrames() {
+            alert("🖼️ Меню выбора рамок: обычная, неоновая, золотая. Применится к вашему аватару.");
+        }
     </script>
 </body>
 </html>
