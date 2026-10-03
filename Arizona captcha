@@ -2,12 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Arizona RP CEF Interface</title>
-    <!-- Подключаем фирменный шрифт Montserrat -->
+    <title>Arizona RP CEF UI with Captcha</title>
+    <!-- Оригинальный шрифт Montserrat -->
     <link href="https://googleapis.com" rel="stylesheet">
     
     <style>
-        /* Общие настройки страницы для имитации игры на заднем фоне */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -15,58 +19,62 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: url('https://imgur.com') no-repeat center center fixed; /* Здесь будет игра */
-            background-size: cover;
             font-family: 'Montserrat', sans-serif;
-            background-color: #1a1a2e; /* Запасной темный фон */
+            background-color: #0b0c10; 
         }
 
-        /* 1. ГЛАВНОЕ ОКНО (Фон Аризоны, без рамок, с размытием) */
+        /* 1. ГЛАВНОЕ ОКНО (Без внешних рамок, Аризона стиль) */
         .arizona-window {
-            width: 800px;
-            height: 500px;
-            background: rgba(14, 15, 20, 0.88); /* Темный полупрозрачный фон Аризоны */
-            backdrop-filter: blur(12px);         /* Эффект размытия мира за окном */
-            -webkit-backdrop-filter: blur(12px);
-            border: none;                        /* ПОЛНОСТЬЮ УБИРАЕМ РАМКИ */
-            border-radius: 14px;                 /* Скругление углов CEF-окна */
-            box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.7); /* Мягкая глубокая тень */
+            width: 750px;
+            height: 460px;
+            background: rgba(14, 15, 20, 0.94); 
+            backdrop-filter: blur(12px);         
+            border: none; /* УБРАНЫ РАМКИ */
+            border-radius: 12px;                 
+            box-shadow: 0px 10px 45px rgba(0, 0, 0, 0.8); 
             display: flex;
             overflow: hidden;
         }
 
-        /* Боковая панель для вкладок */
+        /* Боковая панель */
         .sidebar {
-            width: 220px;
-            background: rgba(0, 0, 0, 0.2);
+            width: 200px;
+            background: rgba(0, 0, 0, 0.25);
             padding: 20px 0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 5px;
         }
 
-        /* 2. ВКЛАДКИ (В стиле Аризоны с синим акцентом) */
+        /* 2. ИСПРАВЛЕННЫЕ РАБОЧИЕ КНОПКИ */
         .tab-item {
-            padding: 14px 25px;
+            padding: 15px 25px;
             background: transparent;
             border: none;
-            color: #8fa2b3;                      /* Неактивный цвет текста */
+            color: #8fa2b3;                      
             font-size: 14px;
             font-weight: 600;
             text-align: left;
             cursor: pointer;
+            outline: none; /* Убирает баг с выделением */
             transition: all 0.2s ease;
             position: relative;
+            display: block;
+            width: 100%;
         }
 
-        /* Точь-в-точь активная вкладка с синей полосой и неоновым градиентом */
-        .tab-item.active, .tab-item:hover {
+        .tab-item:hover {
             color: #ffffff;
-            background: linear-gradient(90deg, rgba(0, 192, 255, 0.15) 0%, rgba(0, 192, 255, 0) 100%);
-            padding-left: 29px;
+            background: linear-gradient(90deg, rgba(0, 192, 255, 0.08) 0%, rgba(0, 192, 255, 0) 100%);
         }
 
-        /* Синяя полоска слева у активной вкладки */
+        /* Активная синяя вкладка */
+        .tab-item.active {
+            color: #ffffff;
+            background: linear-gradient(90deg, rgba(0, 192, 255, 0.16) 0%, rgba(0, 192, 255, 0) 100%);
+            padding-left: 30px;
+        }
+
         .tab-item.active::before {
             content: '';
             position: absolute;
@@ -74,22 +82,22 @@
             top: 0;
             width: 4px;
             height: 100%;
-            background: #00c0ff;                /* Тот самый синий цвет */
-            box-shadow: 0px 0px 10px #00c0ff;   /* Свечение полосы */
+            background: #00c0ff;                
+            box-shadow: 0px 0px 12px #00c0ff;   
         }
 
-        /* Контентная зона справа */
+        /* Правая контентная часть */
         .content-area {
             flex: 1;
-            padding: 30px;
+            padding: 35px;
             display: flex;
             flex-direction: column;
         }
 
-        /* 3. СИНИЙ ТЕКСТ (Цвет кодов Аризоны) */
+        /* ТОЧЬ-В-ТОЧЬ СИНИЙ ТЕКСТ */
         .arizona-blue-text {
-            color: #00c0ff !important;           /* Фирменный ярко-синий/голубой цвет текста */
-            text-shadow: 0px 0px 8px rgba(0, 192, 255, 0.4); /* Небольшой неоновый эффект */
+            color: #00c0ff !important;           
+            text-shadow: 0px 0px 8px rgba(0, 192, 255, 0.3); 
             font-weight: 700;
         }
 
@@ -97,90 +105,164 @@
             margin-top: 0;
             color: #ffffff;
             font-size: 22px;
+            margin-bottom: 12px;
         }
 
         p {
-            color: #b2becd;
+            color: #a4b3c1;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
-        /* Сетка для ячеек ("вубов") */
-        .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            margin-top: 20px;
+        .tab-content {
+            display: none;
+            height: 100%;
         }
 
-        /* 4. «ВУБЫ» / ЯЧЕЙКИ ПРЕДМЕТОВ (Точь-в-точь Аризона) */
-        .vub-slot {
-            aspect-ratio: 1 / 1;
-            /* Радиальный темно-серый градиент из центра ячейки */
-            background: radial-gradient(circle, #2d2f39 0%, #171821 100%);
-            border: 1px solid rgba(255, 255, 255, 0.04); /* Едва заметный внутренний контур */
-            border-radius: 10px;
+        .tab-content.active {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        /* 3. БЛОК КАПЧИ В СТИЛЕ АРИЗОНЫ */
+        .captcha-container {
+            background: rgba(20, 21, 28, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-            box-shadow: inset 0px 2px 6px rgba(0, 0, 0, 0.4);
+            gap: 15px;
         }
 
-        /* Эффект наведения и фокуса на ячейку — загорается синий контур */
-        .vub-slot:hover, .vub-slot.selected {
-            border: 1px solid #00c0ff;
-            box-shadow: inset 0 0 12px rgba(0, 192, 255, 0.2), 0 0 10px rgba(0, 192, 255, 0.1);
-        }
-
-        /* Иконка или текст внутри ячейки предметов */
-        .vub-slot span {
-            color: #617085;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .vub-slot:hover span {
+        /* Отображение цифр с прыгающей высотой (как в оригинале при ловле) */
+        .captcha-display {
+            background: #121319;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 6px;
             color: #00c0ff;
+            text-shadow: 0 0 10px rgba(0, 192, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            width: 100%;
+            border: 1px solid rgba(0, 192, 255, 0.15);
+        }
+
+        /* Имитация неровного шрифта Аризоны */
+        .captcha-char {
+            display: inline-block;
+        }
+        .captcha-char:nth-child(even) { transform: translateY(-3px); }
+        .captcha-char:nth-child(odd) { transform: translateY(3px); }
+
+        /* Поле ввода капчи */
+        .captcha-input {
+            width: 100%;
+            background: #171922;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .captcha-input:focus {
+            border: 1px solid #00c0ff;
+            box-shadow: 0 0 8px rgba(0, 192, 255, 0.2);
         }
     </style>
 </head>
 <body>
 
-    <!-- Единое CEF Окно -->
     <div class="arizona-window">
         
-        <!-- Слева: Вкладки -->
+        <!-- Меню с кнопками -->
         <div class="sidebar">
-            <button class="tab-item active">Главное меню</button>
-            <button class="tab-item">Инвентарь персонажа</button>
-            <button class="tab-item">Магазин фишек</button>
-            <button class="tab-item">Настройки худа</button>
+            <button class="tab-item active" onclick="switchTab(event, 'page-captcha')">Проверка капчи</button>
+            <button class="tab-item" onclick="switchTab(event, 'page-info')">Информация</button>
         </div>
 
-        <!-- Справа: Контент, синий текст и вубы -->
+        <!-- Контент -->
         <div class="content-area">
-            <h2>Текущий баланс: <span class="arizona-blue-text">1,500,000 $</span></h2>
-            <p>Выберите предмет из ячеек ниже. Все рамки убраны, стиль вкладок и <span class="arizona-blue-text">вубов</span> полностью скопирован.</p>
             
-            <!-- Сетка ячеек (Вубов) -->
-            <div class="slots-grid">
-                <div class="vub-slot selected"><span>Слот 1</span></div>
-                <div class="vub-slot"><span>Слот 2</span></div>
-                <div class="vub-slot"><span>Слот 3</span></div>
-                <div class="vub-slot"><span>Слот 4</span></div>
-                <div class="vub-slot"><span>Слот 5</span></div>
-                <div class="vub-slot"><span>Слот 6</span></div>
-                <div class="vub-slot"><span>Слот 7</span></div>
-                <div class="vub-slot"><span>Слот 8</span></div>
-                <div class="vub-slot"><span>Слот 9</span></div>
-                <div class="vub-slot"><span>Слот 10</span></div>
+            <!-- Вкладка с Капчей -->
+            <div id="page-captcha" class="tab-content active">
+                <h2>Защитная <span class="arizona-blue-text">капча</span></h2>
+                <p>Введите 5-значный код, указанный на экране ниже, для подтверждения операции.</p>
+                
+                <div class="captcha-container">
+                    <!-- Сюда JS вставит сгенерированные цифры -->
+                    <div class="captcha-display" id="captchaBox">00000</div>
+                    <input type="text" maxlength="5" class="captcha-input" id="captchaInput" placeholder="Введите код..." autocomplete="off">
+                </div>
             </div>
+
+            <!-- Вкладка с инфой -->
+            <div id="page-info" class="tab-content">
+                <h2>Информация о CEF</h2>
+                <p>Кнопки теперь полностью <span class="arizona-blue-text">активны</span>. Ошибки сжатия и фокуса устранены.</p>
+            </div>
+
         </div>
 
     </div>
+
+    <script>
+        let currentCaptcha = "";
+
+        // 1. Функция переключения вкладок (исправленная)
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // 2. Генератор капчи в стиле Аризоны (5 рандомных цифр)
+        function generateCaptcha() {
+            let code = "";
+            let htmlContent = "";
+            for (let i = 0; i < 5; i++) {
+                let digit = Math.floor(Math.random() * 10);
+                code += digit;
+                htmlContent += `<span class="captcha-char">${digit}</span>`;
+            }
+            currentCaptcha = code;
+            document.getElementById('captchaBox').innerHTML = htmlContent;
+            document.getElementById('captchaInput').value = "";
+        }
+
+        // 3. Проверка ввода
+        document.getElementById('captchaInput').addEventListener('input', function(e) {
+            // Разрешаем только цифры
+            this.value = this.value.replace(/\D/g, '');
+            
+            // Если ввели все 5 цифр — проверяем
+            if (this.value === currentCaptcha) {
+                alert("Капча введена верно!");
+                generateCaptcha(); // Обновляем код
+            } else if (this.value.length === 5) {
+                alert("Неверный код! Попробуйте снова.");
+                generateCaptcha(); // Сбрасываем при ошибке
+            }
+        });
+
+        // Запуск генерации при открытии страницы
+        window.onload = generateCaptcha;
+    </script>
 
 </body>
 </html>
