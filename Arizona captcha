@@ -3,73 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игровое Меню сайта</title>
+    <title>Игровой Хаб — Ввод Капчи</title>
     <style>
-        /* Базовые стили для страницы сайта */
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background: #141419;
             color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
         }
 
-        .welcome-text {
-            text-align: center;
-            font-size: 20px;
-            color: #8a8a98;
-        }
-
-        /* Кнопка-подсказка на экране */
-        .hint-key {
-            display: inline-block;
-            background: #22222a;
-            color: #00ff88;
-            border: 2px solid #00ff88;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 15px;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* ТЕМНЫЙ ФОН ЗА ОКНОМ (БЛЮР) */
-        .modal-overlay {
-            display: none; /* Изначально скрыто */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(6px);
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
-
-        /* Класс для плавной анимации появления */
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        /* ОКНО ИГРОВОГО МЕНЮ */
+        /* ОКНО ИГРОВОГО МЕНЮ (ВСЕГДА НА ЭКРАНЕ) */
         .menu-window {
             background: #1e1e24;
             width: 480px;
@@ -77,15 +25,8 @@
             border: 2px solid #00ff88;
             box-shadow: 0 0 30px rgba(0, 255, 136, 0.25);
             overflow: hidden;
-            transform: scale(0.85);
-            transition: transform 0.25s ease;
         }
 
-        .modal-overlay.active .menu-window {
-            transform: scale(1);
-        }
-
-        /* ШАПКА МЕНЮ */
         .menu-header {
             background: #16161a;
             padding: 20px;
@@ -103,22 +44,6 @@
             text-transform: uppercase;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            color: #ff4d4d;
-            font-size: 32px;
-            line-height: 20px;
-            cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #ff1a1a;
-            transform: scale(1.1);
-        }
-
-        /* КОНТЕНТ МЕНЮ */
         .menu-body {
             padding: 25px;
         }
@@ -126,12 +51,12 @@
         /* БЛОК БАЛАНСА */
         .balance-box {
             background: #111114;
-            padding: 18px;
+            padding: 15px;
             border-radius: 10px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 1px solid #2d2d38;
         }
 
@@ -140,188 +65,210 @@
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
         }
 
-        /* СЕТКА С КНОПКАМИ РАЗДЕЛОВ */
+        /* БЛОК ДЛЯ ВЫВОДА КАПЧИ */
+        .captcha-container {
+            background: #2a2a35;
+            border: 2px dashed #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .captcha-code {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 6px;
+            color: #ff00ff;
+            background: #111114;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            user-select: none;
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+        }
+
+        .hint-text {
+            font-size: 14px;
+            color: #8a8a98;
+            margin-top: 10px;
+        }
+
+        .hint-text strong {
+            color: #00ff88;
+            background: #16161a;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* ПОЛЕ ВВОДА КАПЧИ */
+        .captcha-input {
+            width: 100%;
+            box-sizing: border-box;
+            background: #111114;
+            border: 2px solid #333344;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 4px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .captcha-input:focus {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        /* РАЗДЕЛЫ ДЛЯ ДОПОЛНИТЕЛЬНОГО ФУНКЦИОНАЛА */
         .sections-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+            margin-top: 20px;
         }
 
-        /* КАРТОЧКА РАЗДЕЛА */
         .section-card {
             background: #25252e;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            transition: background 0.2s, border-color 0.2s;
             border: 1px solid #333344;
         }
 
         .section-card:hover {
             background: #2d2d3a;
             border-color: #00ff88;
-            transform: translateY(-3px);
         }
 
         .section-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
+            margin: 0 0 5px 0;
+            font-size: 16px;
             color: #ffffff;
         }
 
         .section-card p {
             margin: 0;
-            font-size: 13px;
+            font-size: 12px;
             color: #a0a0b0;
         }
-        
-        /* Рамка для кастомизации (пример вызова внутри) */
+
         .section-card.premium {
             border-color: #ff00ff;
-        }
-        .section-card.premium:hover {
-            border-color: #ff00ff;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <!-- Контент самого сайта (задний план) -->
-    <div class="welcome-text">
-        <p>Добро пожаловать на игровой сайт!</p>
-        <p>Чтобы открыть личный кабинет с балансом и магазином, нажмите:</p>
-        <div class="hint-key">Клавишу N</div>
-    </div>
+    <div class="menu-window">
+        <!-- Шапка -->
+        <div class="menu-header">
+            <h2>Личный Кабинет</h2>
+        </div>
 
-    <!-- ВСПЛЫВАЮЩЕЕ ОКНО МЕНЮ (MODAL) -->
-    <div class="modal-overlay" id="menuModal">
-        <div class="menu-window">
+        <!-- Контент -->
+        <div class="menu-body">
             
-            <!-- Шапка -->
-            <div class="menu-header">
-                <h2>Личный Кабинет</h2>
-                <button class="close-btn" id="closeBtn">&times;</button>
+            <!-- Баланс игрока -->
+            <div class="balance-box">
+                Баланс: <span id="balanceValue">50,000</span> 💎
             </div>
 
-            <!-- Внутреннее содержимое -->
-            <div class="menu-body">
-                
-                <!-- Отображение Баланса -->
-                <div class="balance-box">
-                    Баланс: <span id="balanceValue">50,000</span> 💎
-                </div>
-
-                <!-- Кнопки функционала сайта -->
-                <div class="sections-grid">
-                    
-                    <!-- Кнопка Казино -->
-                    <div class="section-card" onclick="openCasino()">
-                        <h3>🎰 Казино</h3>
-                        <p>Слоты и рулетка</p>
-                    </div>
-
-                    <!-- Кнопка Скинов -->
-                    <div class="section-card" onclick="openSkins()">
-                        <h3>🎨 Скины</h3>
-                        <p>Магазин кастомизации</p>
-                    </div>
-
-                    <!-- Кнопка Рамок -->
-                    <div class="section-card premium" onclick="openFrames()">
-                        <h3>🖼️ Рамки профиля</h3>
-                        <p>Эксклюзивные обводки</p>
-                    </div>
-
-                    <!-- Кнопка Настроек/Выхода -->
-                    <div class="section-card" onclick="toggleMenu()">
-                        <h3>❌ Закрыть</h3>
-                        <p>Вернуться на сайт</p>
-                    </div>
-
-                </div>
+            <!-- Зона капчи -->
+            <div class="captcha-container">
+                <div class="captcha-code" id="captchaDisplay">AB12</div>
+                <div class="hint-text">Нажмите клавишу <strong>N</strong>, чтобы начать ввод</div>
             </div>
 
+            <!-- Инпут для ввода -->
+            <input type="text" class="captcha-input" id="captchaInput" placeholder="Нажмите N и введите код..." autocomplete="off">
+
+            <!-- Разделы с казино, скинами и рамками -->
+            <div class="sections-grid">
+                <div class="section-card" onclick="alert('Открываем Казино...')">
+                    <h3>🎰 Казино</h3>
+                    <p>Слоты и рулетка</p>
+                </div>
+                <div class="section-card" onclick="alert('Открываем Скины...')">
+                    <h3>🎨 Скины</h3>
+                    <p>Магазин моделей</p>
+                </div>
+                <div class="section-card premium" onclick="alert('Открываем Рамки...')">
+                    <h3>🖼️ Рамки профиля</h3>
+                    <p>Эксклюзивная обводка</p>
+                </div>
+                <div class="section-card" onclick="generateCaptcha()">
+                    <h3>🔄 Обновить</h3>
+                    <p>Сменить капчу</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ЛОГИКА РАБОТЫ (JAVASCRIPT) -->
     <script>
-        const modal = document.getElementById('menuModal');
-        const closeBtn = document.getElementById('closeBtn');
+        const captchaDisplay = document.getElementById('captchaDisplay');
+        const captchaInput = document.getElementById('captchaInput');
         const balanceValue = document.getElementById('balanceValue');
 
-        // Глобальная переменная баланса игрока
         let currentBalance = 50000;
+        let generatedCode = "";
 
-        // Переключатель видимости меню
-        function toggleMenu() {
-            if (modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                // Задержка скрытия display, чтобы успела отработать анимация CSS
-                setTimeout(() => { modal.style.display = 'none'; }, 250);
-            } else {
-                modal.style.display = 'flex';
-                // Небольшой таймаут, чтобы анимация запустилась корректно
-                setTimeout(() => { modal.classList.add('active'); }, 10);
+        // Функция создания случайной капчи из 4 символов (буквы и цифры)
+        function generateCaptcha() {
+            const chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ123456789"; // Без похожих символов вроде I, O, 0
+            let result = "";
+            for (let i = 0; i < 4; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
+            generatedCode = result;
+            captchaDisplay.textContent = generatedCode;
+            captchaInput.value = ""; // Очищаем поле ввода
         }
 
-        // 1. ОТСЛЕЖИВАНИЕ НАЖАТИЯ КЛАВИШИ N
+        // 1. НАЖАТИЕ КЛАВИШИ N ДЛЯ НАЧАЛА ВВОДА
         document.addEventListener('keydown', function(event) {
-            // event.key.toLowerCase() отлавливает и английскую "n", и русскую "т"
-            if (event.key.toLowerCase() === 'n' || event.key.toLowerCase() === 'т') {
-                
-                // Предотвращаем открытие, если пользователь пишет текст в input или textarea
-                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-                    return;
+            // Если фокус НЕ в инпуте, и зажата клавиша N (или русская Т)
+            if (document.activeElement !== captchaInput) {
+                if (event.key.toLowerCase() === 'n' || event.key.toLowerCase() === 'т') {
+                    
+                    event.preventDefault(); // Предотвращаем ввод самой буквы 'n' при активации
+                    captchaInput.focus();   // Ставим курсор в поле ввода капчи
                 }
-
-                toggleMenu();
             }
         });
 
-        // 2. ЗАКРЫТИЕ ПО КЛИКУ НА КРЕСТИК
-        closeBtn.addEventListener('click', toggleMenu);
-
-        // 3. ЗАКРЫТИЕ ПРИ КЛИКЕ НА ТЕМНУЮ ОБЛАСТЬ (МИМО ОКНА)
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                toggleMenu();
+        // 2. ПРОВЕРКА ВВОДА КАПЧИ
+        captchaInput.addEventListener('input', function() {
+            // Переводим введенный текст в верхний регистр, чтобы не зависеть от CapsLock
+            let userValue = captchaInput.value.toUpperCase();
+            
+            // Если пользователь ввел нужные 4 символа
+            if (userValue.length === 4) {
+                if (userValue === generatedCode) {
+                    // Успешный ввод: начисляем бонус
+                    currentBalance += 1500;
+                    balanceValue.textContent = currentBalance.toLocaleString();
+                    alert("Успешно! +1,500 💎 на ваш баланс.");
+                    
+                    captchaInput.blur(); // Убираем фокус с инпута после победы
+                    generateCaptcha();   // Создаем новую капчу
+                } else {
+                    // Ошибка: списываем штраф
+                    currentBalance = Math.max(0, currentBalance - 500);
+                    balanceValue.textContent = currentBalance.toLocaleString();
+                    alert("Неверная капча! -500 💎. Попробуйте еще раз.");
+                    
+                    captchaInput.value = ""; // Сбрасываем неверный ввод
+                }
             }
         });
 
-        // --- ФУНКЦИИ ИГРОВЫХ КНОПОК ---
-
-        function openCasino() {
-            // Пример игры в казино: списываем 500 и даем шанс выиграть
-            if (currentBalance < 500) {
-                alert("Недостаточно алмазов для ставки!");
-                return;
-            }
-            
-            currentBalance -= 500;
-            let win = Math.random() > 0.5; // 50% шанс победы
-            
-            if (win) {
-                currentBalance += 1500;
-                alert("🎰 Вы выиграли 1,500 💎! (Ставка 500 списана)");
-            } else {
-                alert("🎰 Увы, вы проиграли 500 💎.");
-            }
-            
-            // Обновляем текст баланса на экране
-            balanceValue.textContent = currentBalance.toLocaleString();
-        }
-
-        function openSkins() {
-            alert("🎨 Открывается каталог скинов! Здесь будет выбор ваших моделей.");
-        }
-
-        function openFrames() {
-            alert("🖼️ Меню выбора рамок: обычная, неоновая, золотая. Применится к вашему аватару.");
-        }
+        // Генерируем первую капчу при загрузке страницы
+        generateCaptcha();
     </script>
 </body>
 </html>
