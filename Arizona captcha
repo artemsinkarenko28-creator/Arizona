@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arizona RP — Тренировка Ловли Капчи</title>
+    <style>
+        /* Стиль в темных тонах лаунчера Аризоны */
+        body {
+            background-color: #121214;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1a1a1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 2px solid #fc6600; /* Фирменный оранжевый цвет */
+            width: 400px;
+        }
+
+        h1 {
+            color: #fc6600;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        /* Окно капчи как в игре */
+        .captcha-window {
+            background-color: #0b0b0c;
+            border: 2px solid #3a3a42;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #1ae61a; /* Зеленый цвет цифр */
+            margin-bottom: 20px;
+            user-select: none;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 6px;
+            border: 2px solid #3a3a42;
+            background-color: #0b0b0c;
+            color: #fff;
+            text-align: center;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #fc6600;
+        }
+
+        .stats {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: left;
+            background: #222227;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .stats p {
+            margin: 5px 0;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #777;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Arizona Captcha</h1>
+    <div class="captcha-window" id="captchaBox">N/A</div>
+    <input type="text" id="captchaInput" placeholder="Введите капчу..." autocomplete="off" autofocus>
+    
+    <div class="stats">
+        <p>Результат: <strong id="resultText" style="color: #777;">Ожидание</strong></p>
+        <p>Время ввода: <strong id="timeText" style="color: #fc6600;">0.000 сек</strong></p>
+        <p>Верных капч подряд: <strong id="streakText" style="color: #1ae61a;">0</strong></p>
+    </div>
+    
+    <div class="info-text">Нажмите Enter или пробел для подтверждения. Для сброса нажмите Esc.</div>
+</div>
+
+<script>
+    const captchaBox = document.getElementById('captchaBox');
+    const captchaInput = document.getElementById('captchaInput');
+    const resultText = document.getElementById('resultText');
+    const timeText = document.getElementById('timeText');
+    const streakText = document.getElementById('streakText');
+
+    let currentCaptcha = '';
+    let startTime = 0;
+    let isTyping = false;
+    let streak = 0;
+
+    // Генерация случайной 5-значной капчи (как в SAMP)
+    function generateCaptcha() {
+        let captcha = '';
+        for (let i = 0; i < 5; i++) {
+            captcha += Math.floor(Math.random() * 10);
+        }
+        currentCaptcha = captcha;
+        captchaBox.innerText = captcha;
+        captchaInput.value = '';
+        isTyping = false;
+    }
+
+    // Отслеживание ввода
+    captchaInput.addEventListener('input', () => {
+        if (!isTyping && captchaInput.value.length > 0) {
+            startTime = performance.now(); // Точный запуск таймера с миллисекундами
+            isTyping = true;
+        }
+    });
+
+    // Обработка клавиш
+    captchaInput.addEventListener('keydown', (e) => {
+        // Подтверждение на Enter или Пробел
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            verifyCaptcha();
+        }
+        // Сброс на Escape
+        if (e.key === 'Escape') {
+            generateCaptcha();
+            resultText.innerText = 'Сброшено';
+            resultText.style.color = '#777';
+        }
+    });
+
+    // Проверка правильности
+    function verifyCaptcha() {
+        if (!isTyping) return;
+        
+        const endTime = performance.now();
+        const timeTaken = ((endTime - startTime) / 1000).toFixed(3); // Переводим в секунды (0.000)
+        
+        if (captchaInput.value.trim() === currentCaptcha) {
+            resultText.innerText = 'Успешно поймал!';
+            resultText.style.color = '#1ae61a';
+            timeText.innerText = `${timeTaken} сек`;
+            streak++;
+        } else {
+            resultText.innerText = 'Неверный ввод!';
+            resultText.style.color = '#ff3333';
+            timeText.innerText = `0.000 сек`;
+            streak = 0;
+        }
+        
+        streakText.innerText = streak;
+        generateCaptcha();
+    }
+
+    // Инициализация при первой загрузке
+    generateCaptcha();
+</script>
+
+</body>
+</html>
