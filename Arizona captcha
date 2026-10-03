@@ -165,29 +165,22 @@
 <body>
 
     <div class="menu-window">
-        <!-- Шапка -->
         <div class="menu-header">
             <h2>Личный Кабинет</h2>
         </div>
 
-        <!-- Контент -->
         <div class="menu-body">
-            
-            <!-- Баланс игрока -->
             <div class="balance-box">
                 Баланс: <span id="balanceValue">50,000</span> 💎
             </div>
 
-            <!-- Зона капчи -->
             <div class="captcha-container">
                 <div class="captcha-code" id="captchaDisplay">AB12</div>
                 <div class="hint-text">Нажмите клавишу <strong>N</strong>, чтобы начать ввод</div>
             </div>
 
-            <!-- Инпут для ввода -->
             <input type="text" class="captcha-input" id="captchaInput" placeholder="Нажмите N и введите код..." autocomplete="off">
 
-            <!-- Разделы с казино, скинами и рамками -->
             <div class="sections-grid">
                 <div class="section-card" onclick="alert('Открываем Казино...')">
                     <h3>🎰 Казино</h3>
@@ -217,57 +210,47 @@
         let currentBalance = 50000;
         let generatedCode = "";
 
-        // Функция создания случайной капчи из 4 символов (буквы и цифры)
         function generateCaptcha() {
-            const chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ123456789"; // Без похожих символов вроде I, O, 0
+            const chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ123456789";
             let result = "";
             for (let i = 0; i < 4; i++) {
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             generatedCode = result;
             captchaDisplay.textContent = generatedCode;
-            captchaInput.value = ""; // Очищаем поле ввода
+            captchaInput.value = "";
         }
 
-        // 1. НАЖАТИЕ КЛАВИШИ N ДЛЯ НАЧАЛА ВВОДА
+        // Активация инпута по кнопке N (или русской Т)
         document.addEventListener('keydown', function(event) {
-            // Если фокус НЕ в инпуте, и зажата клавиша N (или русская Т)
             if (document.activeElement !== captchaInput) {
                 if (event.key.toLowerCase() === 'n' || event.key.toLowerCase() === 'т') {
-                    
-                    event.preventDefault(); // Предотвращаем ввод самой буквы 'n' при активации
-                    captchaInput.focus();   // Ставим курсор в поле ввода капчи
+                    event.preventDefault(); // убираем букву n из ввода при старте
+                    captchaInput.focus();
                 }
             }
         });
 
-        // 2. ПРОВЕРКА ВВОДА КАПЧИ
+        // Проверка ввода
         captchaInput.addEventListener('input', function() {
-            // Переводим введенный текст в верхний регистр, чтобы не зависеть от CapsLock
             let userValue = captchaInput.value.toUpperCase();
             
-            // Если пользователь ввел нужные 4 символа
             if (userValue.length === 4) {
                 if (userValue === generatedCode) {
-                    // Успешный ввод: начисляем бонус
                     currentBalance += 1500;
                     balanceValue.textContent = currentBalance.toLocaleString();
                     alert("Успешно! +1,500 💎 на ваш баланс.");
-                    
-                    captchaInput.blur(); // Убираем фокус с инпута после победы
-                    generateCaptcha();   // Создаем новую капчу
+                    captchaInput.blur();
+                    generateCaptcha();
                 } else {
-                    // Ошибка: списываем штраф
                     currentBalance = Math.max(0, currentBalance - 500);
                     balanceValue.textContent = currentBalance.toLocaleString();
-                    alert("Неверная капча! -500 💎. Попробуйте еще раз.");
-                    
-                    captchaInput.value = ""; // Сбрасываем неверный ввод
+                    alert("Неверная капча! -500 💎.");
+                    captchaInput.value = "";
                 }
             }
         });
 
-        // Генерируем первую капчу при загрузке страницы
         generateCaptcha();
     </script>
 </body>
