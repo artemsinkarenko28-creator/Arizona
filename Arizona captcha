@@ -1,268 +1,210 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>Arizona RP CEF UI with Captcha</title>
-    <!-- Оригинальный шрифт Montserrat -->
-    <link href="https://googleapis.com" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arizona RP Captcha Trainer</title>
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
-
+        /* Шрифт і темне ігрове тло */
         body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
+            background-color: #0b0f19;
+            background-image: radial-gradient(circle, #151e33 0%, #070a10 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #0b0c10; 
-        }
-
-        /* 1. ГЛАВНОЕ ОКНО (Без внешних рамок, Аризона стиль) */
-        .arizona-window {
-            width: 750px;
-            height: 460px;
-            background: rgba(14, 15, 20, 0.94); 
-            backdrop-filter: blur(12px);         
-            border: none; /* УБРАНЫ РАМКИ */
-            border-radius: 12px;                 
-            box-shadow: 0px 10px 45px rgba(0, 0, 0, 0.8); 
-            display: flex;
+            height: 100vh;
+            margin: 0;
             overflow: hidden;
         }
 
-        /* Боковая панель */
-        .sidebar {
-            width: 200px;
-            background: rgba(0, 0, 0, 0.25);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        /* Головний контейнер у стилі діалогу SAMP (без зовнішніх рамок) */
+        .dialog-container {
+            background: rgba(12, 16, 28, 0.85);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 25px;
+            width: 420px;
+            text-align: center;
+            backdrop-filter: blur(10px);
         }
 
-        /* 2. ИСПРАВЛЕННЫЕ РАБОЧИЕ КНОПКИ */
-        .tab-item {
-            padding: 15px 25px;
-            background: transparent;
-            border: none;
-            color: #8fa2b3;                      
+        .dialog-header {
             font-size: 14px;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            outline: none; /* Убирает баг с выделением */
-            transition: all 0.2s ease;
-            position: relative;
-            display: block;
-            width: 100%;
-        }
-
-        .tab-item:hover {
-            color: #ffffff;
-            background: linear-gradient(90deg, rgba(0, 192, 255, 0.08) 0%, rgba(0, 192, 255, 0) 100%);
-        }
-
-        /* Активная синяя вкладка */
-        .tab-item.active {
-            color: #ffffff;
-            background: linear-gradient(90deg, rgba(0, 192, 255, 0.16) 0%, rgba(0, 192, 255, 0) 100%);
-            padding-left: 30px;
-        }
-
-        .tab-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 4px;
-            height: 100%;
-            background: #00c0ff;                
-            box-shadow: 0px 0px 12px #00c0ff;   
-        }
-
-        /* Правая контентная часть */
-        .content-area {
-            flex: 1;
-            padding: 35px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ТОЧЬ-В-ТОЧЬ СИНИЙ ТЕКСТ */
-        .arizona-blue-text {
-            color: #00c0ff !important;           
-            text-shadow: 0px 0px 8px rgba(0, 192, 255, 0.3); 
-            font-weight: 700;
-        }
-
-        h2 {
-            margin-top: 0;
-            color: #ffffff;
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        p {
-            color: #a4b3c1;
-            font-size: 14px;
-            line-height: 1.6;
+            font-weight: bold;
+            color: #ffa500; /* Класичний помаранчевий колір Arizona */
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-bottom: 20px;
         }
 
-        .tab-content {
-            display: none;
-            height: 100%;
-        }
-
-        .tab-content.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 3. БЛОК КАПЧИ В СТИЛЕ АРИЗОНЫ */
-        .captcha-container {
-            background: rgba(20, 21, 28, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
+        /* Вікно самої капчі — БЕЗ РАМОК, просто чистий темний блок */
+        .captcha-screen {
+            background: rgba(5, 7, 12, 0.9);
             padding: 20px;
-            max-width: 320px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
 
-        /* Отображение цифр с прыгающей высотой (как в оригинале при ловле) */
-        .captcha-display {
-            background: #121319;
-            padding: 10px 25px;
-            border-radius: 6px;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 6px;
-            color: #00c0ff;
-            text-shadow: 0 0 10px rgba(0, 192, 255, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 60px;
-            width: 100%;
-            border: 1px solid rgba(0, 192, 255, 0.15);
+        /* Яскраві СИНІ цифри точнісінько як у грі */
+        .captcha-digits {
+            font-size: 52px;
+            font-weight: 900;
+            color: #3399ff; /* Фірмовий синій колір лову ARZ */
+            letter-spacing: 12px;
+            text-shadow: 0 0 15px rgba(51, 153, 255, 0.6);
+            user-select: none;
+            margin-left: 12px; /* Компенсація трекінгу */
         }
 
-        /* Имитация неровного шрифта Аризоны */
-        .captcha-char {
-            display: inline-block;
-        }
-        .captcha-char:nth-child(even) { transform: translateY(-3px); }
-        .captcha-char:nth-child(odd) { transform: translateY(3px); }
-
-        /* Поле ввода капчи */
-        .captcha-input {
-            width: 100%;
-            background: #171922;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            padding: 10px;
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 16px;
-            text-align: center;
+        /* Приховане дефолтне поле та стилізоване відображення вводу */
+        .input-display {
+            font-size: 24px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
             outline: none;
-            transition: border 0.2s;
+            width: 80%;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 4px;
+            border-bottom: 2px solid #3399ff;
+            margin: 10px auto;
         }
 
-        .captcha-input:focus {
-            border: 1px solid #00c0ff;
-            box-shadow: 0 0 8px rgba(0, 192, 255, 0.2);
+        /* Вкладки/Сторінки (ну типу нажимати для перемикання режимів чи меню) */
+        .pages-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 10px;
         }
+
+        .nav-tab {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.07);
+            border: none;
+            color: #bbbbbb;
+            padding: 10px 5px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-tab:hover {
+            background: rgba(51, 153, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .nav-tab.active {
+            background: #3399ff;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(51, 153, 255, 0.4);
+        }
+
+        /* Сповіщення про результат */
+        .status-message {
+            height: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .status-success { color: #2ecc71; }
+        .status-error { color: #e74c3c; }
     </style>
 </head>
 <body>
 
-    <div class="arizona-window">
+    <div class="dialog-container">
+        <div class="dialog-header">Arizona RP • Ловля Майна</div>
         
-        <!-- Меню с кнопками -->
-        <div class="sidebar">
-            <button class="tab-item active" onclick="switchTab(event, 'page-captcha')">Проверка капчи</button>
-            <button class="tab-item" onclick="switchTab(event, 'page-info')">Информация</button>
+        <!-- Капча екран БЕЗ рамок -->
+        <div class="captcha-screen">
+            <div class="captcha-digits" id="captchaCode">74920</div>
         </div>
 
-        <!-- Контент -->
-        <div class="content-area">
-            
-            <!-- Вкладка с Капчей -->
-            <div id="page-captcha" class="tab-content active">
-                <h2>Защитная <span class="arizona-blue-text">капча</span></h2>
-                <p>Введите 5-значный код, указанный на экране ниже, для подтверждения операции.</p>
-                
-                <div class="captcha-container">
-                    <!-- Сюда JS вставит сгенерированные цифры -->
-                    <div class="captcha-display" id="captchaBox">00000</div>
-                    <input type="text" maxlength="5" class="captcha-input" id="captchaInput" placeholder="Введите код..." autocomplete="off">
-                </div>
-            </div>
+        <!-- Поле вводу -->
+        <input type="text" class="input-display" id="captchaInput" placeholder="Введіть капчу..." maxlength="5" autocomplete="off" autofocus>
+        
+        <div class="status-message" id="status"></div>
 
-            <!-- Вкладка с инфой -->
-            <div id="page-info" class="tab-content">
-                <h2>Информация о CEF</h2>
-                <p>Кнопки теперь полностью <span class="arizona-blue-text">активны</span>. Ошибки сжатия и фокуса устранены.</p>
-            </div>
-
+        <!-- Сторінки "ну типо нажимати" для перемикання -->
+        <div class="pages-navigation">
+            <button class="nav-tab active" onclick="switchPage(1, this)">Капча 5зн</button>
+            <button class="nav-tab" onclick="switchPage(2, this)">PayDay</button>
+            <button class="nav-tab" onclick="switchPage(3, this)">Статистика</button>
         </div>
-
     </div>
 
     <script>
-        let currentCaptcha = "";
+        const captchaCodeElem = document.getElementById('captchaCode');
+        const captchaInputElem = document.getElementById('captchaInput');
+        const statusElem = document.getElementById('status');
+        
+        let currentMode = 1; // 1 = 5 знаків, 2 = PayDay режим
 
-        // 1. Функция переключения вкладок (исправленная)
-        function switchTab(event, tabId) {
-            document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.currentTarget.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        // 2. Генератор капчи в стиле Аризоны (5 рандомных цифр)
+        // Генерація нової капчі
         function generateCaptcha() {
-            let code = "";
-            let htmlContent = "";
-            for (let i = 0; i < 5; i++) {
-                let digit = Math.floor(Math.random() * 10);
-                code += digit;
-                htmlContent += `<span class="captcha-char">${digit}</span>`;
+            let length = currentMode === 1 ? 5 : 6; // Робимо 5 або 6 знаків залежно від сторінки
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
             }
-            currentCaptcha = code;
-            document.getElementById('captchaBox').innerHTML = htmlContent;
-            document.getElementById('captchaInput').value = "";
+            captchaCodeElem.textContent = result;
+            captchaInputElem.value = '';
+            // Рандомізуємо трохи відстань між синіми цифрами для автентичності ARZ
+            captchaCodeElem.style.letterSpacing = (Math.floor(Math.random() * 5) + 10) + 'px';
         }
 
-        // 3. Проверка ввода
-        document.getElementById('captchaInput').addEventListener('input', function(e) {
-            // Разрешаем только цифры
-            this.value = this.value.replace(/\D/g, '');
+        // Обробка вводу
+        captchaInputElem.addEventListener('input', () => {
+            let expectedLength = currentMode === 1 ? 5 : 6;
             
-            // Если ввели все 5 цифр — проверяем
-            if (this.value === currentCaptcha) {
-                alert("Капча введена верно!");
-                generateCaptcha(); // Обновляем код
-            } else if (this.value.length === 5) {
-                alert("Неверный код! Попробуйте снова.");
-                generateCaptcha(); // Сбрасываем при ошибке
+            if (captchaInputElem.value.length === expectedLength) {
+                if (captchaInputElem.value === captchaCodeElem.textContent) {
+                    statusElem.textContent = "Успішно словлено!";
+                    statusElem.className = "status-message status-success";
+                    setTimeout(() => {
+                        statusElem.textContent = "";
+                        generateCaptcha();
+                    }, 800);
+                } else {
+                    statusElem.textContent = "Невірний код! Спробуй ще раз";
+                    statusElem.className = "status-message status-error";
+                    captchaInputElem.value = '';
+                }
             }
         });
 
-        // Запуск генерации при открытии страницы
-        window.onload = generateCaptcha;
-    </script>
+        // Логіка кліків по сторінках (меню)
+        function switchPage(pageNumber, buttonComponent) {
+            // Зміна активної вкладки
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            buttonComponent.classList.add('active');
+            
+            currentMode = pageNumber;
+            
+            if (pageNumber === 1) {
+                statusElem.textContent = "Режим: Стандартна капча";
+                statusElem.className = "status-message";
+                generateCaptcha();
+            } else if (pageNumber === 2) {
+                statusElem.textContent = "Режим: Тренування PayDay";
+                statusElem.className = "status-message";
+                generateCaptcha();
+            } else if (pageNumber === 3) {
+                statusElem.textContent = "Тут будуть твої рекорди введення!";
+                statusElem.className = "status-message";
+            }
+        }
 
+        // Запуск першої капчі при завантаженні
+        generateCaptcha();
+    </script>
 </body>
 </html>
