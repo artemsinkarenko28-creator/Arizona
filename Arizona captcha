@@ -1,305 +1,285 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arizona Captcha Trainer X</title>
-    <style>
-        /* Базовые переменные для темной темы */
-        :root {
-            --bg-overlay: rgba(18, 18, 20, 0.85);
-            --container-bg: #1a1a1e;
-            --border-color: #3a3a42;
-            --text-color: #ffffff;
-            --stats-bg: #222227;
-            --box-bg: #0b0b0c;
-        }
-
-        /* Переменные для светлой темы */
-        [data-theme="light"] {
-            --bg-overlay: rgba(240, 242, 245, 0.9);
-            --container-bg: #ffffff;
-            --border-color: #d1d5db;
-            --text-color: #1f2937;
-            --stats-bg: #f3f4f6;
-            --box-bg: #f9fafb;
-        }
-
-        body {
-            background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), 
-                        url('https://unsplash.com') center/cover no-repeat;
-            color: var(--text-color);
-            font-family: system-ui, -apple-system, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: background 0.3s;
-        }
-
-        /* Кнопка смены темы */
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--container-bg);
-            border: 2px solid #fc6600;
-            color: var(--text-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .main-layout {
-            display: flex;
-            gap: 20px;
-            max-width: 800px;
-            width: 100%;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .container {
-            background-color: var(--container-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            text-align: center;
-            border: 2px solid #fc6600;
-            width: 360px;
-            transition: background-color 0.3s;
-        }
-
-        /* Панель ТОП результатов */
-        .leaderboard {
-            background-color: var(--container-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            border: 2px solid #fc6600;
-            width: 280px;
-            transition: background-color 0.3s;
-        }
-
-        h1, h2 {
-            color: #fc6600;
-            margin: 0 0 20px 0;
-            font-size: 22px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        h2 { font-size: 18px; margin-bottom: 15px;}
-
-        /* Синяя капча как на проф тренажерах */
-        .captcha-box {
-            background-color: var(--box-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 40px;
-            font-weight: bold;
-            letter-spacing: 6px;
-            color: #00bcff; /* Синие цифры капчи */
-            margin-bottom: 20px;
-            user-select: none;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 0 10px rgba(0, 188, 255, 0.3);
-        }
-
-        .captcha-box.hidden {
-            color: #777;
-            font-size: 18px;
-            letter-spacing: 1px;
-            text-shadow: none;
-        }
-
-        input {
-            width: 85%;
-            padding: 12px;
-            font-size: 18px;
-            border-radius: 6px;
-            border: 2px solid var(--border-color);
-            background-color: var(--box-bg);
-            color: var(--text-color);
-            text-align: center;
-            outline: none;
-        }
-        input:focus {
-            border-color: #fc6600;
-        }
-
-        .stats {
-            margin-top: 20px;
-            font-size: 15px;
-            background: var(--stats-bg);
-            padding: 12px;
-            border-radius: 6px;
-            text-align: left;
-        }
-        .stats p { margin: 6px 0; }
-        
-        .hint {
-            font-size: 11px;
-            color: #888;
-            margin-top: 15px;
-            line-height: 1.4;
-        }
-
-        /* Список рекордов */
-        .score-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            text-align: left;
-        }
-        .score-item {
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            font-size: 15px;
-        }
-        .score-item:last-child { border: none; }
-        .score-rank { color: #fc6600; font-weight: bold; }
-        .score-time { color: #00bcff; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arizona Captcha Trainer X</title>
+<style>
+:root {
+--bg-overlay: rgba(18, 18, 20, 0.85);
+--container-bg: #1a1a1e;
+--border-color: #3a3a42;
+--text-color: #ffffff;
+--stats-bg: #222227;
+--box-bg: #0b0b0c;
+}
+[data-theme="light"] {
+--bg-overlay: rgba(240, 242, 245, 0.9);
+--container-bg: #ffffff;
+--border-color: #d1d5db;
+--text-color: #1f2937;
+--stats-bg: #f3f4f6;
+--box-bg: #f9fafb;
+}
+body {
+background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), url('https://unsplash.com') center/cover no-repeat;
+color: var(--text-color);
+font-family: system-ui, -apple-system, sans-serif;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+margin: 0;
+padding: 15px;
+box-sizing: border-box;
+transition: background 0.3s;
+}
+.theme-toggle {
+position: absolute;
+top: 15px;
+right: 15px;
+background: var(--container-bg);
+border: 2px solid #fc6600;
+color: var(--text-color);
+padding: 8px 16px;
+border-radius: 20px;
+cursor: pointer;
+font-weight: bold;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+z-index: 10;
+}
+.main-layout {
+display: flex;
+gap: 20px;
+max-width: 800px;
+width: 100%;
+justify-content: center;
+flex-wrap: wrap;
+}
+.container {
+background-color: var(--container-bg);
+padding: 25px;
+border-radius: 12px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+text-align: center;
+border: 2px solid #fc6600;
+width: 100%;
+max-width: 360px;
+box-sizing: border-box;
+transition: background-color 0.3s;
+}
+.leaderboard {
+background-color: var(--container-bg);
+padding: 25px;
+border-radius: 12px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+border: 2px solid #fc6600;
+width: 100%;
+max-width: 280px;
+box-sizing: border-box;
+transition: background-color 0.3s;
+}
+h1, h2 {
+color: #fc6600;
+margin: 0 0 20px 0;
+font-size: 22px;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+h2 { font-size: 18px; margin-bottom: 15px;}
+.captcha-box {
+background-color: var(--box-bg);
+border: 2px solid var(--border-color);
+border-radius: 6px;
+padding: 12px 5px;
+font-size: clamp(24px, 8vw, 40px);
+font-weight: bold;
+letter-spacing: 4px;
+color: #00bcff;
+margin-bottom: 20px;
+user-select: none;
+min-height: 48px;
+display: flex;
+align-items: center;
+justify-content: center;
+text-shadow: 0 0 10px rgba(0, 188, 255, 0.3);
+word-break: break-all;
+max-width: 100%;
+box-sizing: border-box;
+}
+.captcha-box.hidden {
+color: #777;
+font-size: 16px;
+letter-spacing: 0.5px;
+text-shadow: none;
+}
+input {
+width: 100%;
+max-width: 280px;
+padding: 12px;
+font-size: 18px;
+border-radius: 6px;
+border: 2px solid var(--border-color);
+background-color: var(--box-bg);
+color: var(--text-color);
+text-align: center;
+outline: none;
+box-sizing: border-box;
+}
+input:focus {
+border-color: #fc6600;
+}
+.stats {
+margin-top: 20px;
+font-size: 15px;
+background: var(--stats-bg);
+padding: 12px;
+border-radius: 6px;
+text-align: left;
+}
+.stats p { margin: 6px 0; }
+.hint {
+font-size: 11px;
+color: #888;
+margin-top: 15px;
+line-height: 1.4;
+}
+.score-list {
+list-style: none;
+padding: 0;
+margin: 0;
+text-align: left;
+}
+.score-item {
+padding: 8px 12px;
+border-bottom: 1px solid var(--border-color);
+display: flex;
+justify-content: space-between;
+font-size: 15px;
+}
+.score-item:last-child { border: none; }
+.score-rank { color: #fc6600; font-weight: bold; }
+.score-time { color: #00bcff; font-weight: bold; }
+</style>
 </head>
 <body>
-
 <button class="theme-toggle" id="themeBtn">Тема: Темная</button>
-
 <div class="main-layout">
-    <!-- Основной тренажер -->
-    <div class="container">
-        <h1>ARIZONA CAPTCHA</h1>
-        <div class="captcha-box hidden" id="captchaBox">Нажмите N для старта</div>
-        <input type="text" id="captchaInput" placeholder="Ожидание нажатия N..." autocomplete="off" disabled>
-        
-        <div class="stats">
-            <p>Результат: <strong id="resText" style="color: #888;">Ожидание</strong></p>
-            <p>Время ввода: <strong id="timeText" style="color: #fc6600;">0.000 сек</strong></p>
-            <p>Серия верных: <strong id="streakText" style="color: #1ae61a;">0</strong></p>
-        </div>
-        <div class="hint">
-            Нажми <strong>N</strong> для открытия капчи.<br>
-            Введи цифры и нажми <strong>Enter / Пробел</strong>.<br>
-            Нажми <strong>Esc</strong> для сброса.
-        </div>
-    </div>
-
-    <!-- Таблица ТОП рекордов -->
-    <div class="leaderboard">
-        <h2>🏆 ТОП-5 ЛОВЛИ</h2>
-        <ul class="score-list" id="scoreList">
-            <li class="score-item"><span class="hint">Рекордов пока нет</span></li>
-        </ul>
-    </div>
+<div class="container">
+<h1>ARIZONA CAPTCHA</h1>
+<div class="captcha-box hidden" id="captchaBox">Нажмите N для старта</div>
+<input type="text" id="captchaInput" placeholder="Нажмите N для начала..." autocomplete="off">
+<div class="stats">
+<p>Результат: <strong id="resText" style="color: #888;">Ожидание</strong></p>
+<p>Время ввода: <strong id="timeText" style="color: #fc6600;">0.000 сек</strong></p>
+<p>Серия верных: <strong id="streakText" style="color: #1ae61a;">0</strong></p>
 </div>
-
+<div class="hint">
+Нажми <strong>N</strong> (на любой раскладке) для открытия капчи.<br>
+Введи цифры и нажми <strong>Enter / Пробел</strong>.<br>
+Нажми <strong>Esc</strong> для сброса.
+</div>
+</div>
+<div class="leaderboard">
+<h2>🏆 ТОП-5 ЛОВЛИ</h2>
+<ul class="score-list" id="scoreList">
+<li class="score-item"><span class="hint">Рекордов пока нет</span></li>
+</ul>
+</div>
+</div>
 <script>
-    const box = document.getElementById('captchaBox');
-    const input = document.getElementById('captchaInput');
-    const res = document.getElementById('resText');
-    const time = document.getElementById('timeText');
-    const streakElement = document.getElementById('streakText');
-    const scoreList = document.getElementById('scoreList');
-    const themeBtn = document.getElementById('themeBtn');
-
-    let current = '', start = 0, isActive = false, streak = 0;
-    let records = JSON.parse(localStorage.getItem('captcha_records')) || [];
-
-    // Переключение темы (Белая / Темная)
-    themeBtn.addEventListener('click', () => {
-        if (document.documentElement.getAttribute('data-theme') === 'light') {
-            document.documentElement.removeAttribute('data-theme');
-            themeBtn.innerText = 'Тема: Темная';
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            themeBtn.innerText = 'Теma: Светлая';
-        }
-    });
-
-    function resetToWaiting() {
-        current = '';
-        box.innerText = 'Нажмите N для старта';
-        box.classList.add('hidden');
-        input.value = '';
-        input.placeholder = 'Ожидание нажатия N...';
-        input.disabled = true;
-        isActive = false;
-    }
-
-    // Сохранение и отображение ТОП результатов
-    function saveRecord(newTime) {
-        records.push(parseFloat(newTime));
-        // Сортируем от самых быстрых к медленным
-        records.sort((a, b) => a - b);
-        // Оставляем только ТОП-5
-        records = records.slice(0, 5);
-        localStorage.setItem('captcha_records', JSON.stringify(records));
-        renderRecords();
-    }
-
-    function renderRecords() {
-        if (records.length === 0) {
-            scoreList.innerHTML = '<li class="score-item"><span class="hint">Рекордов пока нет</span></li>';
-            return;
-        }
-        scoreList.innerHTML = records.map((time, idx) => `
-            <li class="score-item">
-                <span><span class="score-rank">#${idx + 1}</span> Попытка</span>
-                <span class="score-time">${time.toFixed(3)} сек</span>
-            </li>
-        `).join('');
-    }
-
-    // Ждем нажатия кнопки N
-    document.addEventListener('keydown', (e) => {
-        if (!isActive && (e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т')) {
-            e.preventDefault();
-            current = Math.floor(10000 + Math.random() * 90000).toString();
-            box.innerText = current;
-            box.classList.remove('hidden');
-            
-            input.disabled = false;
-            input.placeholder = 'Вводите капчу...';
-            input.focus();
-            
-            start = performance.now();
-            isActive = true;
-        }
-
-        if (e.key === 'Escape') {
-            resetToWaiting();
-            res.innerText = 'Сброшено';
-            res.style.color = '#888';
-        }
-    });
-
-    // Проверка ввода
-    input.addEventListener('keydown', (e) => {
-        if (!isActive) return;
-
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            const diff = ((performance.now() - start) / 1000).toFixed(3);
-            
-            if (input.value.trim() === current) {
-                res.innerText = 'Успешно поймал!';
-                res.style.color = '#1ae61a';
-                time.innerText = diff + ' сек';
-                streak++;
-                saveRecord(diff);
-            } else {
-                res.innerText = 'Неверный ввод!';
-                res.style.color = '#ff3333';
+const box = document.getElementById('captchaBox');
+const input = document.getElementById('captchaInput');
+const res = document.getElementById('resText');
+const time = document.getElementById('timeText');
+const streakElement = document.getElementById('streakText');
+const scoreList = document.getElementById('scoreList');
+const themeBtn = document.getElementById('themeBtn');
+let current = '', start = 0, isActive = false, streak = 0;
+let records = JSON.parse(localStorage.getItem('captcha_records')) || [];
+themeBtn.addEventListener('click', () => {
+if (document.documentElement.getAttribute('data-theme') === 'light') {
+document.documentElement.removeAttribute('data-theme');
+themeBtn.innerText = 'Тема: Темная';
+} else {
+document.documentElement.setAttribute('data-theme', 'light');
+themeBtn.innerText = 'Тема: Светлая';
+}
+});
+function resetToWaiting() {
+current = '';
+box.innerText = 'Нажмите N для старта';
+box.classList.add('hidden');
+input.value = '';
+input.placeholder = 'Нажмите N для начала...';
+isActive = false;
+}
+function saveRecord(newTime) {
+records.push(parseFloat(newTime));
+records.sort((a, b) => a - b);
+records = records.slice(0, 5);
+localStorage.setItem('captcha_records', JSON.stringify(records));
+renderRecords();
+}
+function renderRecords() {
+if (records.length === 0) {
+scoreList.innerHTML = '<li class="score-item"><span class="hint">Рекордов пока нет</span></li>';
+return;
+}
+scoreList.innerHTML = records.map((time, idx) => `
+<li class="score-item">
+<span><span class="score-rank">#${idx + 1}</span> Рекорд</span>
+<span class="score-time">${time.toFixed(3)} сек</span>
+</li>
+`).join('');
+}
+window.addEventListener('keydown', (e) => {
+const key = e.key.toLowerCase();
+if (!isActive && (key === 'n' || key === 'т' || e.code === 'KeyN')) {
+e.preventDefault();
+current = Math.floor(10000 + Math.random() * 90000).toString();
+box.innerText = current;
+box.classList.remove('hidden');
+input.placeholder = 'Вводите капчу...';
+input.focus();
+start = performance.now();
+isActive = true;
+}
+if (e.key === 'Escape') {
+resetToWaiting();
+res.innerText = 'Сброшено';
+res.style.color = '#888';
+}
+});
+input.addEventListener('keydown', (e) => {
+if (input.value.length === 0 && (e.key.toLowerCase() === 'n' || e.key.toLowerCase() === 'т')) {
+if (current.indexOf(e.key) !== 0) { 
+e.preventDefault();
+return;
+}
+}
+if (!isActive) return;
+if (e.key === 'Enter' || e.key === ' ') {
+e.preventDefault();
+const diff = ((performance.now() - start) / 1000).toFixed(3);
+if (input.value.trim() === current) {
+res.innerText = 'Успешно поймал!';
+res.style.color = '#1ae61a';
+time.innerText = diff + ' сек';
+streak++;
+saveRecord(diff);
+} else {
+res.innerText = 'Неверный ввод!';
+res.style.color = '#ff3333';
+time.innerText = '0.000 сек';
+streak = 0;
+}
+streakElement.innerText = streak;
+resetToWaiting();
+}
+});
+renderRecords();
+</script>
+</body>
+</html>
