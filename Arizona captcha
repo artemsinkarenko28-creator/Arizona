@@ -1,257 +1,216 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игровой Хаб — Ввод Капчи</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: #141419;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+body{font-family:'Tahoma',sans-serif;background:#141419;color:#fff;margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;user-select:none;overflow:hidden;cursor:url('data:image/svg+xml;utf8,'),auto;}
+button,.list-item,input{cursor:url('data:image/svg+xml;utf8,'),pointer!important;}
+#sampChat{position:fixed;top:20px;left:20px;width:550px;z-index:10000;font-size:14px;font-weight:bold;text-shadow:1px 1px 1px #000;display:flex;flex-direction:column;gap:4px;}
+.chat-line{background:rgba(0,0,0,0.4);padding:4px 8px;border-radius:3px;animation:fadeIn 0.2s ease-out;}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+.captcha-box-wrapper{background:#00bbbb;border:5px solid #2d3436;padding:15px 40px;margin-bottom:25px;box-shadow:inset 0 0 20px rgba(0,0,0,0.6),0 10px 20px rgba(0,0,0,0.5);min-width:320px;text-align:center;position:relative;}
+.textdraw-captcha{font-size:82px;font-weight:900;color:#000;letter-spacing:16px;font-family:'Courier New',monospace;text-shadow:2px 2px 0px rgba(255,255,255,0.2);display:inline-block;}
+.captcha-box-wrapper::before{content:" ";position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(0,0,0,0) 50%,rgba(0,0,0,0.2) 50%),linear-gradient(90deg,rgba(0,0,0,0.1),rgba(0,0,0,0) 3px);background-size:100% 4px,6px 100%;pointer-events:none;}
+.textdraw-captcha.blind{filter:blur(14px);}
+.samp-dialog{background:#222227;border:2px solid #5a5a62;width:440px;border-radius:5px;box-shadow:0 10px 30px rgba(0,0,0,0.8);display:none;}
+.samp-dialog.active{display:block;}
+.dialog-header{background:#151518;padding:10px 14px;font-size:14px;font-weight:bold;color:#ffaa00;border-bottom:2px solid #3a3a42;text-align:center;letter-spacing:0.5px;}
+.dialog-body{padding:20px;}
+.dialog-text{font-size:13px;margin-bottom:15px;line-height:1.6;text-align:center;color:#ced6e0;}
+.samp-input{width:90%;display:block;margin:0 auto 15px auto;background:#0f0f12;border:1px solid #4a4a54;color:#fff;padding:10px;font-size:20px;text-align:center;outline:none;font-family:monospace;letter-spacing:5px;font-weight:bold;}
+.samp-input:focus{border-color:#ffaa00;box-shadow:0 0 5px rgba(255,170,0,0.3);}
+.dialog-list{display:flex;flex-direction:column;gap:2px;background:#0f0f12;padding:4px;border:1px solid #3a3a42;max-height:250px;overflow-y:auto;margin-bottom:15px;}
+.list-item{padding:10px 14px;font-size:13px;color:#fff;display:flex;justify-content:space-between;font-weight:bold;}
+.list-item:hover{background:#ffaa00;color:#111113;}
+.list-item span.price{color:#2ecc71;}
+.list-item:hover span.price{color:#111113;}
+.dialog-buttons{display:flex;justify-content:space-around;padding:0 15px 20px 15px;}
+.samp-btn{background:#32323e;border:1px solid #4a4a54;color:#fff;padding:8px 24px;font-size:13px;font-weight:bold;min-width:130px;border-radius:3px;}
+.samp-btn:hover{background:#424252;border-color:#ffaa00;}
+.hint{margin-top:25px;font-size:12px;color:#747d8c;text-align:center;font-weight:bold;}
+.top-table{width:100%; border-collapse:collapse;background:#0f0f12;font-size:13px;}
+.top-table th,.top-table td{padding:10px;border:1px solid #3a3a42;text-align:left;}
+.top-table th{color:#ffaa00;background:#151518;}
+.toggle-container{margin-bottom:15px;font-size:13px;display:flex;justify-content:center;align-items:center;gap:10px;color:#a4b0be;}
+.stats-panel{position:fixed;bottom:20px;right:20px;background:rgba(34,34,39,0.95);padding:15px;border:1px solid #5a5a62;border-radius:5px;font-size:13px;width:230px;box-shadow:0 5px 15px rgba(0,0,0,0.5);}
+.stats-title{color:#ffaa00;font-weight:bold;margin-bottom:8px;text-align:center;text-transform:uppercase;font-size:11px;letter-spacing:1px;}
+.stats-row{display:flex;justify-content:space-between;margin:4px 0;color:#dcdde1;}
+.stats-row span{font-weight:bold;color:#fff;}
+.flash-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0;transition:opacity:0.1s ease;}
+#chatInputWrapper{position:fixed;bottom:30px;left:20px;width:550px;background:rgba(0,0,0,0.85);border:1px solid #3a3a42;padding:8px;display:none;z-index:10001;}
+#chatInput{width:100%;background:none;border:none;outline:none;color:#fff;font-family:'Tahoma',sans-serif;font-size:14px;font-weight:bold;}
 
-        /* ОКНО ИГРОВОГО МЕНЮ (ВСЕГДА НА ЭКРАНЕ) */
-        .menu-window {
-            background: #1e1e24;
-            width: 480px;
-            border-radius: 16px;
-            border: 2px solid #00ff88;
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.25);
-            overflow: hidden;
-        }
 
-        .menu-header {
-            background: #16161a;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2d2d38;
-        }
 
-        .menu-header h2 {
-            margin: 0;
-            font-size: 22px;
-            letter-spacing: 1px;
-            color: #00ff88;
-            text-transform: uppercase;
-        }
 
-        .menu-body {
-            padding: 25px;
-        }
 
-        /* БЛОК БАЛАНСА */
-        .balance-box {
-            background: #111114;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            border: 1px solid #2d2d38;
-        }
 
-        .balance-box span {
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        }
+PRESS N
 
-        /* БЛОК ДЛЯ ВЫВОДА КАПЧИ */
-        .captcha-container {
-            background: #2a2a35;
-            border: 2px dashed #444;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+Статистика сессии
+Всего введено: 0
+Ср. скорость: 0.000 сек
+Ошибки: 0
 
-        .captcha-code {
-            font-size: 36px;
-            font-weight: bold;
-            letter-spacing: 6px;
-            color: #ff00ff;
-            background: #111114;
-            padding: 10px;
-            border-radius: 6px;
-            display: inline-block;
-            user-select: none;
-            text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
-        }
 
-        .hint-text {
-            font-size: 14px;
-            color: #8a8a98;
-            margin-top: 10px;
-        }
+Проверка на робота
 
-        .hint-text strong {
-            color: #00ff88;
-            background: #16161a;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
+ Слепой режим (Blind Mode)
+Для генерации оригинального кода нажмите клавишу N.
+[N] — запуск капчи | [ESC] — выйти в Главное Меню
 
-        /* ПОЛЕ ВВОДА КАПЧИ */
-        .captcha-input {
-            width: 100%;
-            box-sizing: border-box;
-            background: #111114;
-            border: 2px solid #333344;
-            border-radius: 10px;
-            padding: 15px;
-            color: #fff;
-            font-size: 20px;
-            text-align: center;
-            letter-spacing: 4px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
 
-        .captcha-input:focus {
-            border-color: #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-        }
 
-        /* РАЗДЕЛЫ ДЛЯ ДОПОЛНИТЕЛЬНОГО ФУНКЦИОНАЛА */
-        .sections-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
+Принять
+В меню (ESC)
 
-        .section-card {
-            background: #25252e;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
-            border: 1px solid #333344;
-        }
 
-        .section-card:hover {
-            background: #2d2d3a;
-            border-color: #00ff88;
-        }
 
-        .section-card h3 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            color: #ffffff;
-        }
+ArzCaptcha.fun — Главное Меню
 
-        .section-card p {
-            margin: 0;
-            font-size: 12px;
-            color: #a0a0b0;
-        }
+Баланс: 50,000 💎
 
-        .section-card.premium {
-            border-color: #ff00ff;
-        }
-    </style>
-</head>
-<body>
+1. 🎰 Развлекательный центр (Казино «4 Дракона»)
+2. 🎨 Магазин эксклюзивного имущества (Скины)
+3. 🏆 Таблица лучших ловцов (Топы)
+4. 📦 Открытие Кейсов с призами
+5. 🔧 Настройки заднего фона
+6. ⚙ Панель Администратора
+7. 🔄 Вернуться к тренировке ловли
 
-    <div class="menu-window">
-        <div class="menu-header">
-            <h2>Личный Кабинет</h2>
-        </div>
 
-        <div class="menu-body">
-            <div class="balance-box">
-                Баланс: <span id="balanceValue">50,000</span> 💎
-            </div>
 
-            <div class="captcha-container">
-                <div class="captcha-code" id="captchaDisplay">AB12</div>
-                <div class="hint-text">Нажмите клавишу <strong>N</strong>, чтобы начать ввод</div>
-            </div>
+Выбрать
+Назад
 
-            <input type="text" class="captcha-input" id="captchaInput" placeholder="Нажмите N и введите код..." autocomplete="off">
 
-            <div class="sections-grid">
-                <div class="section-card" onclick="alert('Открываем Казино...')">
-                    <h3>🎰 Казино</h3>
-                    <p>Слоты и рулетка</p>
-                </div>
-                <div class="section-card" onclick="alert('Открываем Скины...')">
-                    <h3>🎨 Скины</h3>
-                    <p>Магазин моделей</p>
-                </div>
-                <div class="section-card premium" onclick="alert('Открываем Рамки...')">
-                    <h3>🖼️ Рамки профиля</h3>
-                    <p>Эксклюзивная обводка</p>
-                </div>
-                <div class="section-card" onclick="generateCaptcha()">
-                    <h3>🔄 Обновить</h3>
-                    <p>Сменить капчу</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        const captchaDisplay = document.getElementById('captchaDisplay');
-        const captchaInput = document.getElementById('captchaInput');
-        const balanceValue = document.getElementById('balanceValue');
+🎰 Казино «Четыре Дракона»
 
-        let currentBalance = 50000;
-        let generatedCode = "";
+Выберите игровой стол. Баланс: 50,000 💎
 
-        function generateCaptcha() {
-            const chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ123456789";
-            let result = "";
-            for (let i = 0; i < 4; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            generatedCode = result;
-            captchaDisplay.textContent = generatedCode;
-            captchaInput.value = "";
-        }
+1. • Прокрутить Игровой слот 1,000 💎
+2. • Сыграть в кости с крупье 5,000 💎
+3. • Колесо Удачи (Фортуна) 10,000 💎
+4. • Карточный стол: Дурак (Мапхак) 5,000 💎
 
-        // Активация инпута по кнопке N (или русской Т)
-        document.addEventListener('keydown', function(event) {
-            if (document.activeElement !== captchaInput) {
-                if (event.key.toLowerCase() === 'n' || event.key.toLowerCase() === 'т') {
-                    event.preventDefault(); // убираем букву n из ввода при старте
-                    captchaInput.focus();
-                }
-            }
-        });
 
-        // Проверка ввода
-        captchaInput.addEventListener('input', function() {
-            let userValue = captchaInput.value.toUpperCase();
-            
-            if (userValue.length === 4) {
-                if (userValue === generatedCode) {
-                    currentBalance += 1500;
-                    balanceValue.textContent = currentBalance.toLocaleString();
-                    alert("Успешно! +1,500 💎 на ваш баланс.");
-                    captchaInput.blur();
-                    generateCaptcha();
-                } else {
-                    currentBalance = Math.max(0, currentBalance - 500);
-                    balanceValue.textContent = currentBalance.toLocaleString();
-                    alert("Неверная капча! -500 💎.");
-                    captchaInput.value = "";
-                }
-            }
-        });
+Назад
 
-        generateCaptcha();
-    </script>
-</body>
-</html>
+
+🃏 Карточный стол: Дурак (Мапхак)
+
+Крупье козырь: 
+
+КАРТЫ КРУПЬЕ (МАПХАК ВИДИТ ВСЕ):
+
+
+НА СТОЛЕ ПУСТО
+
+ВАШИ КАРТЫ:
+
+
+
+Взять / ПассСдаться
+
+
+📦 Магазин Секретных Кейсов
+Выберите кейс. Баланс: 50,000 💎
+
+1. Обычный кейс 1,000 💎
+2. Серебряный кейс 10,000 💎
+3. Золотой кейс 100,000 💎
+4. Платиновый кейс 1,000,000 💎
+
+
+Назад
+
+
+🔧 Настройки кастомизации фона
+
+
+Выбрать ...
+Сбросить
+
+Назад
+
+
+🎨 Магазин эксклюзивных скинов
+
+
+1. Скин: CJ (ID 74) 25,000 💎
+2. Скин: Хулиган (ID 2) 5,000 💎
+3. Скин: Томас Шелби (ID 294) 40,000 💎
+
+
+Назад
+
+
+🏆 Рейтинг лучших ловцов сайта
+МестоИгрокВремя1Horii_Shit0.412 сек2Lovets_Bravyi0.520 сек3Вы (Ваш рекорд)-- сек4Samp_Hacker0.680 сек
+Назад
+
+
+Авторизация Администратора
+
+ВойтиОтмена
+
+
+⚙ Панель Администратора
+
+
+Выдать алмазы
+
+Выйти
+
+
+const captchaDisplay=document.getElementById('captchaDisplay');const captchaInput=document.getElementById('captchaInput');const sampChat=document.getElementById('sampChat');const chatInputWrapper=document.getElementById('chatInputWrapper');const chatInput=document.getElementById('chatInput');const blindToggle=document.getElementById('blindToggle');const flash=document.getElementById('flash');
+let currentBalance=parseInt(localStorage.getItem('arz_balance'))||50000;let generatedCode="",startTime=null,isTyping=false,hasStarted=false,isAdmin=false;let currentTag=localStorage.getItem('arz_user_tag')||"[Player]";let bestTime=localStorage.getItem('arz_best_time')?parseFloat(localStorage.getItem('arz_best_time')):null;let totalInputs=parseInt(localStorage.getItem('arz_total_inputs'))||0,totalSeconds=parseFloat(localStorage.getItem('arz_total_seconds'))||0,totalErrors=parseInt(localStorage.getItem('arz_total_errors'))||0;
+const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+function playCreamThock(freq=140){try{const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();const filter=audioCtx.createBiquadFilter();osc.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);osc.type='sine';osc.frequency.setValueAtTime(freq+Math.random()*15,audioCtx.currentTime);osc.frequency.exponentialRampToValueAtTime(60,audioCtx.currentTime+0.04);filter.type='lowpass';filter.frequency.setValueAtTime(350,audioCtx.currentTime);gain.gain.setValueAtTime(0.25,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.05);osc.start();osc.stop(audioCtx.currentTime+0.05);}catch(e){}}
+function playSystemTone(freq,duration){try{const osc=audioCtx.createOscillator();const gain=audioCtx.createGain();osc.connect(gain);gain.connect(audioCtx.destination);osc.frequency.value=freq;gain.gain.setValueAtTime(0.06,audioCtx.currentTime);osc.start();osc.stop(audioCtx.currentTime+duration);}catch(e){}}
+function syncStatsPanel(){document.getElementById('statCount').textContent=totalInputs;document.getElementById('statAvg').textContent=totalInputs>0?(totalSeconds/totalInputs).toFixed(3)+' сек':'0.000 сек';document.getElementById('statErrors').textContent=totalErrors;if(bestTime){document.getElementById('userBestTime').textContent=bestTime.toFixed(3)+' сек';}if(currentBalance>=100000&&currentTag==="[Player]")currentTag="[VIP]";if(isAdmin)currentTag="[Admin]";localStorage.setItem('arz_balance',currentBalance);localStorage.setItem('arz_user_tag',currentTag);}
+function triggerFlash(color){flash.style.background=color;flash.style.opacity='0.25';setTimeout(()=>flash.style.opacity='0',180);}
+function addChatMessage(text){const line=document.createElement('div');line.className='chat-line';line.innerHTML=text;sampChat.appendChild(line);setTimeout(()=>{line.remove();},9000);}
+function switchDialog(dialogName){document.querySelectorAll('.samp-dialog').forEach(d=>d.classList.remove('active'));if(dialogName==='Captcha'){captchaDisplay.parentElement.style.display='block';document.getElementById('dialogCaptcha').classList.add('active');}else{captchaDisplay.parentElement.style.display='none';document.getElementById('dialog'+dialogName).classList.add('active');}document.getElementById('mainBalance').textContent=currentBalance.toLocaleString();document.querySelectorAll('.current-money').forEach(el=>el.textContent=currentBalance.toLocaleString()+" 💎");syncStatsPanel();}
+function resetToTraining(){hasStarted=false;captchaDisplay.textContent="PRESS N";captchaDisplay.classList.remove('blind');captchaInput.value="";captchaInput.disabled=true;captchaInput.placeholder="Нажмите N для старта";switchDialog('Captcha');}
+function generateCaptcha(){let result="";for(let i=0;i<5;i++){result+=Math.floor(Math.random()*10);}generatedCode=result;captchaDisplay.textContent=generatedCode;if(blindToggle.checked)captchaDisplay.classList.add('blind');captchaInput.disabled=false;captchaInput.value="";captchaInput.focus();startTime=performance.now();isTyping=true;hasStarted=true;playCreamThock(180);}
+document.addEventListener('keydown',function(event){
+if(chatInputWrapper.style.display==='block'){if(event.key==='Escape'){playCreamThock(120);chatInputWrapper.style.display='none';chatInput.blur();}return;}
+if(event.key.toLowerCase()==='f6'||(event.key.toLowerCase()==='t'&&document.activeElement!==captchaInput&&document.activeElement.tagName!=='INPUT')){event.preventDefault();playCreamThock(160);chatInputWrapper.style.display='block';chatInput.value="";chatInput.focus();return;}
+if(event.key.toLowerCase()==='n'||event.key.toLowerCase()==='т'){if(document.getElementById('dialogCaptcha').classList.contains('active')&&!hasStarted){event.preventDefault();generateCaptcha();return;}}
+if(event.key==='Escape'){event.preventDefault();playCreamThock(110);if(document.getElementById('dialogCaptcha').classList.contains('active')){switchDialog('MainMenu');}else{resetToTraining();}return;}
+if(event.key>='1'&&event.key<='7'&&document.activeElement!==captchaInput&&document.activeElement.tagName!=='INPUT'){const activeDlg=document.querySelector('.samp-dialog.active');if(activeDlg){const items=activeDlg.querySelectorAll('.dialog-list .list-item');const idx=parseInt(event.key)-1;if(items&&items[idx]){playCreamThock(150);items[idx].click();}}}
+});
+document.addEventListener('click',function(e){if(e.target.tagName==='BUTTON'||e.target.classList.contains('list-item'))playCreamThock(140);});
+chatInput.addEventListener('keydown',function(e){if(e.key==='Enter'){playCreamThock(130);let msg=chatInput.value.trim();if(msg){let color=currentTag==="[Admin]"?"#ff4d4d":currentTag==="[VIP]"?"#f1c40f":"#2ecc71";addChatMessage(<span style="color:${color};font-weight:bold;">${currentTag} Игрок:</span> <span style="color:#fff;">${msg}</span>);}chatInputWrapper.style.display='none';chatInput.blur();}});
+captchaInput.addEventListener('keydown',function(e){if(e.key>='0'&&e.key<='9')playCreamThock(150);if(e.key==='Enter'){playCreamThock(130);checkCaptcha();}});
+function checkCaptcha(){
+if(!hasStarted)return;let userValue=captchaInput.value;if(userValue.length<5)return;
+let endTime=performance.now(),timeTaken=startTime?parseFloat(((endTime-startTime)/1000).toFixed(3)):0;
+if(userValue===generatedCode){currentBalance+=2500;totalInputs++;totalSeconds+=timeTaken;localStorage.setItem('arz_total_inputs',totalInputs);localStorage.setItem('arz_total_seconds',totalSeconds);playSystemTone(1100,0.12);addChatMessage(<span style='color:#00ffff;font-weight:900;'>[ArzCaptcha] Введено за ${timeTaken.toFixed(3)} сек✓ +2,500 💎.</span>);if(!bestTime||timeTaken<bestTime){bestTime=timeTaken;localStorage.setItem('arz_best_time',bestTime);}switchDialog('MainMenu');}
+else{currentBalance=Math.max(0,currentBalance-1000);totalErrors++;localStorage.setItem('arz_total_errors',totalErrors);playSystemTone(280,0.25);addChatMessage("[Ошибка] Неверная капча! -1,000 💎.");resetToTraining();}
+}
+function playCasino(type){
+let cost=type==='slots'?1000:type==='dice'?5000:10000;if(currentBalance<cost)return;currentBalance-=cost;let winChance=Math.random();
+if(type==='slots'){if(winChance>0.6){currentBalance+=3000;triggerFlash('green');addChatMessage("🎰 [Казино] Выигрыш +3,000 💎!");}else{triggerFlash('red');}}
+else if(type==='dice'){let pScore=Math.floor(Math.random()*6)+1,dScore=Math.floor(Math.random()6)+1;if(pScore>dScore){currentBalance+=10000;triggerFlash('green');addChatMessage(🎲 [Кости] Вы выиграли +10,000 💎!);}else if(pScore===dScore){currentBalance+=cost;}else{triggerFlash('red');}}
+else if(type==='wheel'){if(winChance>0.75){currentBalance+=40000;triggerFlash('green');addChatMessage("🎡 [Колесо] ДЖЕКПОТ +40,000 💎!");}else{triggerFlash('red');}}switchDialog('Casino');
+}
+function openCase(id){let config={1:[1000,200,2500,"Обычный"],2:[10000,3000,25000,"Серебряный"],3:[100000,35000,250000,"Золотой"],4:[1000000,400000,3000000,"Платиновый"]};let[cost,min,max,name]=config[id];if(currentBalance<cost)return;currentBalance-=cost;let win=Math.floor(Math.random()(max-min+1))+min;currentBalance+=win;triggerFlash('#ffaa00');addChatMessage(📦 [Кейсы] Вы открыли кейс и выиграли: ${win.toLocaleString()} 💎!);switchDialog('Cases');}
+function buyItem(name,price){if(currentBalance<price)return;currentBalance-=price;addChatMessage([Магазин] Куплено "${name}"!);switchDialog('Skins');}
+function openAdminPanel(){if(isAdmin)switchDialog('AdminPanel');else switchDialog('AdminAuth');}
+function submitAdminAuth(){if(document.getElementById('adminPasswordInput').value==="1488"){isAdmin=true;currentTag="[Admin]";switchDialog('AdminPanel');}}
+function addAdminDiamonds(){currentBalance+=parseInt(document.getElementById('adminCheatAmount').value)||0;switchDialog('AdminPanel');}
+document.getElementById('bgFileInput').addEventListener('change',function(e){const file=e.target.files;if(file){const reader=new FileReader();reader.onload=function(event){document.body.style.backgroundImage=url('${event.target.result}');document.body.style.backgroundSize='cover';localStorage.setItem('arz_bg_data',event.target.result);};reader.readAsDataURL(file);}});
+function resetBackground(){document.body.style.backgroundImage='none';localStorage.removeItem('arz_bg_data');}
+if(localStorage.getItem('arz_bg_data')){document.body.style.backgroundImage=url('${localStorage.getItem('arz_bg_data')}');document.body.style.backgroundSize='cover';}
+let suits=['♥️','♦️','♣️','♠️'],ranks=['6','7','8','9','10','В','Д','К','Т'],deck=[],playerHand=[],dealerHand=[],trumpCard=null,durakGameState="";
+function startDurakGame(){deck=[];playerHand=[];dealerHand=[];document.getElementById('durakTable').innerHTML='НА СТОЛЕ ПУСТО';suits.forEach(s=>ranks.forEach(r=>deck.push({rank:r,suit:s,val:ranks.indexOf(r)})));deck.sort(()=>Math.random()-0.5);trumpCard=deck[deck.length-1];document.getElementById('durakTrump').textContent=trumpCard.rank+trumpCard.suit;for(let i=0;i<6;i++){playerHand.push(deck.pop());dealerHand.push(deck.pop());}renderDurakHands();durakGameState="player_turn";}
+function renderDurakHands(){const dDiv=document.getElementById('dealerCards');dDiv.innerHTML="";dealerHand.forEach(c=>{dDiv.innerHTML+=<span style="background:#2f3542;padding:3px 6px;border:1px solid #ff4d4d;">${c.rank}${c.suit}</span>;});const pDiv=document.getElementById('playerCards');pDiv.innerHTML="";playerHand.forEach((c,idx)=>{let clr=(c.suit==='♥️'||c.suit==='♦️')?'#ff4757':'#fff';pDiv.innerHTML+=<button onclick="playerPlayCard(${idx})" style="background:#2f3542;color:${clr};padding:5px 8px;font-weight:bold;">${c.rank}${c.suit}</button>;});}
+function playerPlayCard(idx){
+if(durakGameState!=="player_turn")return;let card=playerHand[idx],table=document.getElementById('durakTable');table.innerHTML=<span>${card.rank}${card.suit} VS </span>;playerHand.splice(idx,1);renderDurakHands();durakGameState="dealer_defend";
+setTimeout(()=>{
+let defIdx=dealerHand.findIndex(dc=>(dc.suit===card.suit&&dc.val>card.val)||(dc.suit===trumpCard.suit&&card.suit!==trumpCard.suit));if(defIdx===-1&&card.suit!==trumpCard.suit)defIdx=dealerHand.findIndex(dc=>dc.suit===trumpCard.suit);
+if(defIdx!==-1){let dCard=dealerHand[defIdx];dealerHand.splice(defIdx,1);table.innerHTML+=<span>${dCard.rank}${dCard.suit}</span>;if(playerHand.length===0){checkDurakEnd();return;}renderDurakHands();durakGameState="player_turn";}
+else{table.innerHTML+=<span>БЕРЕТ</span>;dealerHand.push(card);if(deck.length>0&&playerHand.length<6)playerHand.push(deck.pop());renderDurakHands();durakGameState="player_turn";}checkDurakEnd();
+},600);
+}
+function durakTakeOrPass(){if(durakGameState==="player_turn"){while(playerHand.length<6&&deck.length>0)playerHand.push(deck.pop());while(dealerHand.length<6&&deck.length>0)dealerHand.push(deck.pop());renderDurakHands();checkDurakEnd();}}
+function checkDurakEnd(){if(playerHand.length===0&&dealerHand.length>0){currentBalance+=15000;triggerFlash('green');addChatMessage("🃏 [Дурак] Вы выиграли +15,000 💎!");switchDialog('Casino');}else if(dealerHand.length===0&&playerHand.length>0){switchDialog('Casino');}else if(dealerHand.length===0&&playerHand.length===0){currentBalance+=5000;switchDialog('Casino');}}
+syncStatsPanel();
