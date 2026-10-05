@@ -4,47 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArzCaptcha — Симулятор ловли Arizona RP</title>
-    <style>
-        body { 
-            background-color: #11141a; 
-            color: #ffffff; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            user-select: none;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0l7 20 4-6 6 6 3-3-6-6 6-4z" fill="%23ffffff" stroke="%23000000" stroke-width="2" stroke-linejoin="miter"/></svg>'), auto;
-        }
-        button, input, li, select, a {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0l7 20 4-6 6 6 3-3-6-6 6-4z" fill="%23ffffff" stroke="%23000000" stroke-width="2" stroke-linejoin="miter"/></svg>'), pointer !important;
-        }
-        .hub-container { background-color: #161920; padding: 25px; border-radius: 12px; border: 1px solid #232836; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
-        .window { display: none; }
-        .window.active { display: block; }
-        h2 { margin-top: 0; font-size: 18px; color: #d1d5db; text-transform: uppercase; letter-spacing: 1px; text-align: center; border-bottom: 1px solid #232836; padding-bottom: 10px; }
-        .menu-list { list-style: none; padding: 0; margin: 20px 0; }
-        .menu-item { background: #1f2330; padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #2d3345; transition: all 0.2s; display: flex; justify-content: space-between; }
-        .menu-item:hover { background: #282e40; border-color: #ff9f43; }
-        .captcha-box { background-color: #0b0c10; border: 2px solid #ff9f43; border-radius: 6px; font-size: 42px; font-weight: 800; padding: 20px; margin: 20px 0; letter-spacing: 6px; color: #ff9f43; text-shadow: 0 0 10px rgba(255,159,67,0.3); text-align: center; font-family: monospace; min-height: 50px; }
-        .input-field { width: 93%; padding: 12px; font-size: 18px; background-color: #0d0f13; border: 2px solid #2d3242; color: #fff; text-align: center; border-radius: 6px; }
-        .input-field:focus { outline: none; border-color: #ff9f43; }
-        .btn { background: #ff9f43; color: #11141a; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; width: 100%; margin-top: 10px; }
-        .btn:hover { background: #ffa852; }
-        .btn-secondary { background: #353b48; color: #fff; }
-        .btn-secondary:hover { background: #4b5468; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #0d0f13; padding: 10px; border-radius: 6px; font-size: 14px; }
-        
-        .hud-chat-zone { position: fixed; top: 20px; left: 20px; width: 450px; z-index: 9999; pointer-events: none; }
-        .chat-area { height: 180px; overflow-y: hidden; font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; color: #ffffff; text-shadow: 1px 1px 1px #000, -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000; display: flex; flex-direction: column; justify-content: flex-end; }
-        .chat-msg { margin-bottom: 3px; }
-        .chat-input-box { margin-top: 8px; display: none; pointer-events: auto; }
-        .chat-input-field { width: 100%; padding: 5px 8px; font-size: 14px; background-color: rgba(0, 0, 0, 0.85); border: 1px solid #555; color: #fff; font-family: 'Courier New', monospace; border-radius: 0; }
-        .chat-input-field:focus { outline: none; border-color: #ff9f43; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ИГРОВОЙ САМП-ЧАТ СЛЕВА СВЕРХУ -->
 <div class="hud-chat-zone">
     <div class="chat-area" id="samp-chat">
         <div class="chat-msg" style="color: #57606f;">[Система] Добро пожаловать! Нажмите N для старта капчи.</div>
@@ -57,7 +21,7 @@
 <div class="hub-container">
     <div style="text-align: right; color: #ff9f43; font-weight: bold; margin-bottom: 10px;">Баланс: <span id="global-balance">50,000</span> 💎</div>
 
-    <!-- ТРЕНИРОВКА -->
+    <!-- ТРЕНИРОВКА КАПЧИ -->
     <div id="win-training" class="window active">
         <h2>ArzCaptcha — Симулятор ловли Arizona RP</h2>
         <div class="stats-grid">
@@ -74,7 +38,7 @@
         <div style="font-size: 12px; color: #57606f; text-align: center; margin-top: 15px;">[N] — капча | [ESC] — Меню | [F6]/[T] — Чат | [B] — Слепой режим</div>
     </div>
 
-    <!-- МЕНЮ -->
+    <!-- ГЛАВНОЕ МЕНЮ -->
     <div id="win-main-menu" class="window">
         <h2>ArzCaptcha.fun — Главное Меню</h2>
         <ul class="menu-list">
@@ -100,7 +64,7 @@
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Назад</button>
     </div>
 
-    <!-- ДУРАК -->
+    <!-- КАРТОЧНЫЙ СТОЛ ДУРАК -->
     <div id="win-durak" class="window">
         <h2>🃏 Карточный стол: Дурак (Мапхак)</h2>
         <div style="background:#0d0f13; padding: 10px; border-radius:6px; font-size:13px; margin-bottom:10px;">
@@ -117,7 +81,7 @@
         <button class="btn btn-secondary" style="background:#ff4757;" onclick="switchWindow('win-casino')">Сдаться</button>
     </div>
 
-    <!-- СКИНЫ -->
+    <!-- МАГАЗИН СКИНОВ -->
     <div id="win-skins" class="window">
         <h2>🎨 Магазин эксклюзивных скинов</h2>
         <div style="font-size:12px; color:#a4b0be; text-align:center; margin-bottom:10px;">Текущий скин: <span id="active-skin-display" style="color:#2ed573;">Стандартный</span></div>
@@ -142,15 +106,16 @@
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Назад</button>
     </div>
 
-    <!-- НАСТРОЙКИ И АДМИНКА -->
+    <!-- КАСТОМИЗАЦИЯ ФОНА -->
     <div id="win-custom-bg" class="window">
-        <h2>🔧 Настройки кастомизации фонда</h2>
+        <h2>🔧 Настройки кастомизации фона</h2>
         <input type="file" id="bg-file" accept="image/*" style="display:none;" onchange="handleBgUpload(this)">
         <button class="btn" onclick="document.getElementById('bg-file').click()">Выбрать файл изображения</button>
         <button class="btn btn-secondary" onclick="resetBg()">Сбросить на стандартный</button>
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Назад</button>
     </div>
 
+    <!-- АДМИН АВТОРИЗАЦИЯ -->
     <div id="win-admin-auth" class="window">
         <h2>Авторизация Администратора</h2>
         <input type="password" id="admin-pass-input" class="input-field" placeholder="Пароль...">
@@ -158,6 +123,7 @@
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Отмена</button>
     </div>
 
+    <!-- АДМИН ПАНЕЛЬ -->
     <div id="win-admin-panel" class="window">
         <h2>⚙ Панель Управления Администратора</h2>
         <div style="margin-bottom:15px;">
@@ -168,6 +134,7 @@
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Выйти</button>
     </div>
 
+    <!-- ТАБЛИЦА ЛИДЕРОВ -->
     <div id="win-leaderboard" class="window">
         <h2>🏆 Рейтинг лучших ловцов сайта</h2>
         <table style="width:100%; font-size:14px; text-align:left; border-collapse:collapse; margin: 15px 0;">
@@ -179,255 +146,237 @@
         <button class="btn btn-secondary" onclick="switchWindow('win-main-menu')">Назад</button>
     </div>
 </div>
-<script>
-    let gameState = {
-        balance: 50000, totalCaptchas: 0, totalErrors: 0, streak: 0, allTimes: [], bestTime: null, xp: 0, level: 1, currentCaptcha: "", startTime: null, isBlindMode: false, isChatOpen: false, ownedSkins: ['Стандартный'], activeSkin: 'Стандартный', isAdmin: false, godMode: false, durakGame: { deck: [], player: [], dealer: [], trump: '', table: [] }
-    };
 
-    if(localStorage.getItem('arz_save_v2')) {
-        try { gameState = {...gameState, ...JSON.parse(localStorage.getItem('arz_save_v2'))}; updateUI(); } catch(e) {}
-    }
-
-    function switchWindow(targetId) {
-        document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
-        document.getElementById(targetId).classList.add('active');
-        if(targetId === 'win-training') document.getElementById('captcha-input').focus();
-    }
-
-    function updateUI() {
-        document.getElementById('global-balance').innerText = gameState.balance.toLocaleString();
-        document.getElementById('stat-total').innerText = gameState.totalCaptchas;
-        document.getElementById('stat-errors').innerText = gameState.totalErrors;
-        document.getElementById('stat-streak').innerText = gameState.streak;
-        document.getElementById('stat-xp').innerText = gameState.xp;
-        document.getElementById('stat-level').innerText = gameState.level;
-        document.getElementById('active-skin-display').innerText = gameState.activeSkin;
-        
-        if(gameState.allTimes.length > 0) {
-            document.getElementById('stat-avg').innerText = (gameState.allTimes.reduce((a, b) => a + b, 0) / gameState.allTimes.length).toFixed(3);
-        } else document.getElementById('stat-avg').innerText = "0.000";
-
-        let mult = 1.0 + (Math.floor(gameState.streak / 5) * 0.2);
-        if (gameState.activeSkin === 'Томас Шелби') mult += 0.5;
-        document.getElementById('stat-multiplier').innerText = `x${mult.toFixed(1)}`;
-        
-        localStorage.setItem('arz_save_v2', JSON.stringify({
-            balance: gameState.balance, totalCaptchas: gameState.totalCaptchas, totalErrors: gameState.totalErrors, streak: gameState.streak, allTimes: gameState.allTimes, bestTime: gameState.bestTime, xp: gameState.xp, level: gameState.level, ownedSkins: gameState.ownedSkins, activeSkin: gameState.activeSkin, isAdmin: gameState.isAdmin
-        }));
-    }
-
-    function addChatMessage(text, color = "#ffffff") {
-        const chat = document.getElementById('samp-chat');
-        const msg = document.createElement('div');
-        msg.className = 'chat-msg'; msg.style.color = color; msg.innerText = text;
-        chat.appendChild(msg);
-        while(chat.children.length > 8) chat.removeChild(chat.firstChild);
-    }
-
-    function generateCaptcha() {
-        const input = document.getElementById('captcha-input');
-        const box = document.getElementById('captcha-window');
-        gameState.currentCaptcha = Math.floor(10000 + Math.random() * 90000).toString();
-        
-        if (gameState.isBlindMode) {
-            box.innerText = "КОД СКРЫТ (БЛАЙНД)"; box.style.color = "#ff4757";
-        } else {
-            box.innerText = gameState.currentCaptcha; box.style.color = "#ff9f43";
-        }
-        input.value = ""; input.disabled = false; input.focus(); gameState.startTime = null;
-
-        if(gameState.godMode) {
-            setTimeout(() => { input.value = gameState.currentCaptcha; verifyCaptcha(performance.now() - 340); }, 300);
-        }
-    }
-
-    function verifyCaptcha(forcedTime = null) {
-        const input = document.getElementById('captcha-input');
-        const userVal = input.value.trim(); if(!userVal) return;
-        let timeTakenSec = forcedTime ? (forcedTime / 1000) : ((performance.now() - gameState.startTime) / 1000);
-
-        if(userVal === gameState.currentCaptcha) {
-            gameState.totalCaptchas++; gameState.streak++; gameState.allTimes.push(timeTakenSec);
-            if(!gameState.bestTime || timeTakenSec < gameState.bestTime) {
-                gameState.bestTime = timeTakenSec; addChatMessage(`[Рекорд] Личный рекорд: ${timeTakenSec.toFixed(3)} сек!`, "#2ed573");
-            }
-            let baseReward = gameState.isBlindMode ? 500 : 200;
-            let mult = 1.0 + (Math.floor(gameState.streak / 5) * 0.2) + (gameState.activeSkin === 'Томас Шелби' ? 0.5 : 0);
-            gameState.balance += Math.floor(baseReward * mult);
-            gameState.xp += gameState.activeSkin === 'Хулиган' ? 25 : 15;
-            
-            if(gameState.xp >= 100) { gameState.level++; gameState.xp -= 100; addChatMessage(`[Уровень] Повышение до ${gameState.level} уровня!`, "#eccc68"); }
-            addChatMessage(`[Успешно] Капча введена за ${timeTakenSec.toFixed(3)} сек.`, "#1dd1a1");
-            input.disabled = true; box = document.getElementById('captcha-window'); box.innerText = "УСПЕШНО"; box.style.color = "#1dd1a1";
-            setTimeout(generateCaptcha, 1000);
-        } else {
-            gameState.totalErrors++; gameState.streak = 0; addChatMessage(`[Ошибка] Неверный код!`, "#ff6b6b");
-            input.value = ""; gameState.startTime = null;
-        }
-        updateUI();
-    }
-
-    window.addEventListener('keydown', (e) => {
-        const activeWin = document.querySelector('.window.active');
-        if((e.key.toLowerCase() === 't' || e.key === 'F6') && !gameState.isChatOpen) {
-            e.preventDefault(); gameState.isChatOpen = true;
-            document.getElementById('chat-input-container').style.display = 'block';
-            document.getElementById('chat-field').focus(); return;
-        }
-        if(e.key === 'Enter' && gameState.isChatOpen) {
-            const field = document.getElementById('chat-field'); const msg = field.value.trim();
-            if(msg) addChatMessage((gameState.isAdmin ? "[Admin] " : "") + `Игрок: ${msg}`, gameState.isAdmin ? "#ff4757" : "#ffffff");
-            field.value = ""; document.getElementById('chat-input-container').style.display = 'none'; gameState.isChatOpen = false;
-            if(activeWin.id === 'win-training') document.getElementById('captcha-input').focus(); return;
-        }
-        if(gameState.isChatOpen) return;
-        if(e.key.toLowerCase() === 'n' || e.key.toLowerCase() === 'т') { if(activeWin.id === 'win-training') { e.preventDefault(); generateCaptcha(); } }
-        if(e.key.toLowerCase() === 'b' || e.key.toLowerCase() === 'и') {
-            if(activeWin.id === 'win-training') {
-                gameState.isBlindMode = !gameState.isBlindMode;
-                document.getElementById('current-mode-display').innerText = gameState.isBlindMode ? "Слепой" : "Обычный";
-                document.getElementById('current-mode-display').style.color = gameState.isBlindMode ? "#ff4757" : "#ff9f43";
-            }
-        }
-        if(e.key === 'Escape') switchWindow(activeWin.id === 'win-training' ? 'win-main-menu' : 'win-training');
-        if(e.key === 'Enter' && activeWin.id === 'win-training') verifyCaptcha();
-    });
-
-    document.getElementById('captcha-input').addEventListener('input', () => {
-        if(!gameState.startTime && document.getElementById('captcha-input').value.length > 0) gameState.startTime = performance.now();
-    });
-
-    function openCasino() { switchWindow('win-casino'); }
-    function playSlots() {
-        if(gameState.balance < 1000) return alert("Мало ресурсов!"); gameState.balance -= 1000;
-        const items = ['🍒', '🍋', '💎', '🔔', '7️⃣']; const r1 = items[Math.floor(Math.random()*5)], r2 = items[Math.floor(Math.random()*5)], r3 = items[Math.floor(Math.random()*5)];
-        alert(`[Слоты] Комбинация: [ ${r1} | ${r2} | ${r3} ]`);
-        if(r1 === r2 && r2 === r3) gameState.balance += (r1==='💎'||r1==='7️⃣') ? 25000 : 10000;
-        else if(r1===r2 || r2===r3 || r1===r3) gameState.balance += 2000; updateUI();
-    }
-    function playDice() {
-        if(gameState.balance < 5000) return alert("Мало ресурсов!"); gameState.balance -= 5000;
-        const p = Math.floor(Math.random()*6)+Math.floor(Math.random()*6)+2, d = Math.floor(Math.random()*6)+Math.floor(Math.random()*6)+2;
-        alert(`У вас: ${p}. У крупье: ${d}.`); if(p > d) gameState.balance += 10000; else if(p === d) gameState.balance += 5000; updateUI();
-    }
-    function playWheel() {
-        if(gameState.balance < 10000) return alert("Мало ресурсов!"); gameState.balance -= 10000;
-        const sectors = ['Ничего', 'XP-Бонус', '5,000 💎', 'Секретный Скин', '50,000 💎']; const w = sectors[Math.floor(Math.random()*5)];
-        alert(`Выпало: ${w}`); if(w==='5,000 💎') gameState.balance += 5000; if(w==='50,000 💎') gameState.balance += 50000;
-        if(w==='XP-Бонус') gameState.xp = Math.min(99, gameState.xp + 50); if(w==='Секретный Скин' && !gameState.ownedSkins.includes('Хулиган')) gameState.ownedSkins.push('Хулиган');
-        updateUI();
-    }
-    function startDurakGame() {
-        const suits = ['♠','♣','♥','♦']; gameState.durakGame.deck = [];
-        for(let s of suits) { for(let v=6; v<=14; v++) gameState.durakGame.deck.push({suit:s, val:v}); }
-        gameState.durakGame.deck.sort(() => Math.random() - 0.5); gameState.durakGame.trump = suits[Math.floor(Math.random()*4)];
-        gameState.durakGame.player = gameState.durakGame.deck.splice(0, 6); gameState.durakGame.dealer = gameState.durakGame.deck.splice(0, 6);
-        renderDurak();
-    }
-    function renderDurak() {
-        document.getElementById('durak-trump').innerText = gameState.durakGame.trump;
-        document.getElementById('durak-dealer-cards').innerText = gameState.durakGame.dealer.map(c => `[${c.val}${c.suit}]`).join(' ');
-        document.getElementById('durak-player-cards').innerHTML = gameState.durakGame.player.map((c, i) => `<button onclick="playerChooseCard(${i})" style="background:#2d3345; color:#fff; border:1px solid #ff9f43; margin:2px; padding:4px 8px;">${c.val}${c.suit}</button>`).join('');
-    }
-    function playerChooseCard(i) {
-let card = gameState.durakGame.player.splice(i, 1)[0];
-document.getElementById('durak-table').innerText = `На столе: [${card.val}${card.suit}]`; 
-renderDurak();
+<script src="script.js"></script>
+</body>
+</html>
+/* МЫШКА ИЗ ARIZONA RP И ИСХОДНЫЕ СТИЛИ ДИАЛОГОВ */
+body { 
+    background-color: #11141a; 
+    color: #ffffff; 
+    font-family: 'Segoe UI', Roboto, sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+    margin: 0; 
+    user-select: none;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0l7 20 4-6 6 6 3-3-6-6 6-4z" fill="%23ffffff" stroke="%23000000" stroke-width="2" stroke-linejoin="miter"/></svg>'), auto;
 }
 
-function durakAction(a) { 
-    gameState.balance += Math.random() > 0.4 ? 15000 : 0; 
-    switchWindow('win-casino'); 
-    updateUI(); 
+button, input, li, select, a, .menu-item {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0l7 20 4-6 6 6 3-3-6-6 6-4z" fill="%23ffffff" stroke="%23000000" stroke-width="2" stroke-linejoin="miter"/></svg>'), pointer !important;
 }
 
-document.addEventListener('click', (e) => { 
-    if(e.target.innerText && e.target.innerText.includes('Дурак')) { 
-        if(gameState.balance >= 5000) { 
-            gameState.balance -= 5000; 
-            startDurakGame(); 
-        } 
-    } 
+.hub-container { background-color: #161920; padding: 25px; border-radius: 12px; border: 1px solid #232836; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
+.window { display: none; }
+.window.active { display: block; }
+h2 { margin-top: 0; font-size: 18px; color: #d1d5db; text-transform: uppercase; letter-spacing: 1px; text-align: center; border-bottom: 1px solid #232836; padding-bottom: 10px; }
+.menu-list { list-style: none; padding: 0; margin: 20px 0; }
+.menu-item { background: #1f2330; padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #2d3345; transition: all 0.2s; display: flex; justify-content: space-between; }
+.menu-item:hover { background: #282e40; border-color: #ff9f43; }
+.captcha-box { background-color: #0b0c10; border: 2px solid #ff9f43; border-radius: 6px; font-size: 42px; font-weight: 800; padding: 20px; margin: 20px 0; letter-spacing: 6px; color: #ff9f43; text-shadow: 0 0 10px rgba(255,159,67,0.3); text-align: center; font-family: monospace; min-height: 50px; }
+.input-field { width: 93%; padding: 12px; font-size: 18px; background-color: #0d0f13; border: 2px solid #2d3242; color: #fff; text-align: center; border-radius: 6px; }
+.input-field:focus { outline: none; border-color: #ff9f43; }
+.btn { background: #ff9f43; color: #11141a; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; width: 100%; margin-top: 10px; }
+.btn:hover { background: #ffa852; }
+.btn-secondary { background: #353b48; color: #fff; }
+.btn-secondary:hover { background: #4b5468; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #0d0f13; padding: 10px; border-radius: 6px; font-size: 14px; }
+
+/* ЧАТ СЛЕВА СВЕРХУ С ОБВОДКОЙ */
+.hud-chat-zone { position: fixed; top: 20px; left: 20px; width: 450px; z-index: 9999; pointer-events: none; }
+.chat-area { height: 180px; overflow-y: hidden; font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; color: #ffffff; text-shadow: 1px 1px 1px #000, -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000; display: flex; flex-direction: column; justify-content: flex-end; }
+.chat-msg { margin-bottom: 3px; }
+.chat-input-box { margin-top: 8px; display: none; pointer-events: auto; }
+.chat-input-field { width: 100%; padding: 5px 8px; font-size: 14px; background-color: rgba(0, 0, 0, 0.85); border: 1px solid #555; color: #fff; font-family: 'Courier New', monospace; border-radius: 0; }
+.chat-input-field:focus { outline: none; border-color: #ff9f43; }
+// ИГРОВАЯ ЛОГИКА СИМУЛЯТОРА АРИЗОНЫ
+let gameState = {
+    balance: 50000, totalCaptchas: 0, totalErrors: 0, streak: 0, allTimes: [], bestTime: null, xp: 0, level: 1, currentCaptcha: "", startTime: null, isBlindMode: false, isChatOpen: false, ownedSkins: ['Стандартный'], activeSkin: 'Стандартный', isAdmin: false, godMode: false, durakGame: { deck: [], player: [], dealer: [], trump: '', table: [] }
+};
+
+if(localStorage.getItem('arz_save_v3')) {
+    try { gameState = {...gameState, ...JSON.parse(localStorage.getItem('arz_save_v3'))}; updateUI(); } catch(e) {}
+}
+
+function switchWindow(targetId) {
+    document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+    document.getElementById(targetId).classList.add('active');
+    if(targetId === 'win-training') document.getElementById('captcha-input').focus();
+}
+
+function updateUI() {
+    document.getElementById('global-balance').innerText = gameState.balance.toLocaleString();
+    document.getElementById('stat-total').innerText = gameState.totalCaptchas;
+    document.getElementById('stat-errors').innerText = gameState.totalErrors;
+    document.getElementById('stat-streak').innerText = gameState.streak;
+    document.getElementById('stat-xp').innerText = gameState.xp;
+    document.getElementById('stat-level').innerText = gameState.level;
+    document.getElementById('active-skin-display').innerText = gameState.activeSkin;
+    
+    if(gameState.allTimes.length > 0) {
+        document.getElementById('stat-avg').innerText = (gameState.allTimes.reduce((a, b) => a + b, 0) / gameState.allTimes.length).toFixed(3);
+    } else document.getElementById('stat-avg').innerText = "0.000";
+
+    let mult = 1.0 + (Math.floor(gameState.streak / 5) * 0.2);
+    if (gameState.activeSkin === 'Томас Шелби') mult += 0.5;
+    document.getElementById('stat-multiplier').innerText = `x${mult.toFixed(1)}`;
+    
+    localStorage.setItem('arz_save_v3', JSON.stringify({
+        balance: gameState.balance, totalCaptchas: gameState.totalCaptchas, totalErrors: gameState.totalErrors, streak: gameState.streak, allTimes: gameState.allTimes, bestTime: gameState.bestTime, xp: gameState.xp, level: gameState.level, ownedSkins: gameState.ownedSkins, activeSkin: gameState.activeSkin, isAdmin: gameState.isAdmin
+    }));
+}
+
+function addChatMessage(text, color = "#ffffff") {
+    const chat = document.getElementById('samp-chat');
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg'; msg.style.color = color; msg.innerText = text;
+    chat.appendChild(msg);
+    while(chat.children.length > 8) chat.removeChild(chat.firstChild);
+}
+
+function generateCaptcha() {
+    const input = document.getElementById('captcha-input');
+    const box = document.getElementById('captcha-window');
+    gameState.currentCaptcha = Math.floor(10000 + Math.random() * 90000).toString();
+    
+    if (gameState.isBlindMode) {
+        box.innerText = "КОД СКРЫТ (БЛАЙНД)"; box.style.color = "#ff4757";
+    } else {
+        box.innerText = gameState.currentCaptcha; box.style.color = "#ff9f43";
+    }
+    input.value = ""; input.disabled = false; input.focus(); gameState.startTime = null;
+
+    if(gameState.godMode) {
+        setTimeout(() => { input.value = gameState.currentCaptcha; verifyCaptcha(performance.now() - 340); }, 300);
+    }
+}
+
+function verifyCaptcha(forcedTime = null) {
+    const input = document.getElementById('captcha-input');
+    const userVal = input.value.trim(); if(!userVal) return;
+    let timeTakenSec = forcedTime ? (forcedTime / 1000) : ((performance.now() - gameState.startTime) / 1000);
+
+    if(userVal === gameState.currentCaptcha) {
+        gameState.totalCaptchas++; gameState.streak++; gameState.allTimes.push(timeTakenSec);
+        if(!gameState.bestTime || timeTakenSec < gameState.bestTime) {
+            gameState.bestTime = timeTakenSec; addChatMessage(`[Рекорд] Личный рекорд: ${timeTakenSec.toFixed(3)} сек!`, "#2ed573");
+        }
+        let baseReward = gameState.isBlindMode ? 500 : 200;
+        let mult = 1.0 + (Math.floor(gameState.streak / 5) * 0.2) + (gameState.activeSkin === 'Томас Шелби' ? 0.5 : 0);
+        gameState.balance += Math.floor(baseReward * mult);
+        gameState.xp += gameState.activeSkin === 'Хулиган' ? 25 : 15;
+        
+        if(gameState.xp >= 100) { gameState.level++; gameState.xp -= 100; addChatMessage(`[Уровень] Повышение до ${gameState.level} уровня!`, "#eccc68"); }
+        addChatMessage(`[Успешно] Капча введена за ${timeTakenSec.toFixed(3)} сек.`, "#1dd1a1");
+        input.disabled = true; let bBox = document.getElementById('captcha-window'); bBox.innerText = "УСПЕШНО"; bBox.style.color = "#1dd1a1";
+        setTimeout(generateCaptcha, 1000);
+    } else {
+        gameState.totalErrors++; gameState.streak = 0; addChatMessage(`[Ошибка] Неверный код!`, "#ff6b6b");
+        input.value = ""; gameState.startTime = null;
+    }
+    updateUI();
+}
+
+window.addEventListener('keydown', (e) => {
+    const activeWin = document.querySelector('.window.active');
+    if((e.key.toLowerCase() === 't' || e.key === 'F6') && !gameState.isChatOpen) {
+        e.preventDefault(); gameState.isChatOpen = true;
+        document.getElementById('chat-input-container').style.display = 'block';
+        document.getElementById('chat-field').focus(); return;
+    }
+    if(e.key === 'Enter' && gameState.isChatOpen) {
+        const field = document.getElementById('chat-field'); const msg = field.value.trim();
+        if(msg) addChatMessage((gameState.isAdmin ? "[Admin] " : "") + `Игрок: ${msg}`, gameState.isAdmin ? "#ff4757" : "#ffffff");
+        field.value = ""; document.getElementById('chat-input-container').style.display = 'none'; gameState.isChatOpen = false;
+        if(activeWin.id === 'win-training') document.getElementById('captcha-input').focus(); return;
+    }
+    if(gameState.isChatOpen) return;
+    if(e.key.toLowerCase() === 'n' || e.key.toLowerCase() === 'т') { if(activeWin.id === 'win-training') { e.preventDefault(); generateCaptcha(); } }
+    if(e.key.toLowerCase() === 'b' || e.key.toLowerCase() === 'и') {
+        if(activeWin.id === 'win-training') {
+            gameState.isBlindMode = !gameState.isBlindMode;
+            document.getElementById('current-mode-display').innerText = gameState.isBlindMode ? "Слепой" : "Обычный";
+            document.getElementById('current-mode-display').style.color = gameState.isBlindMode ? "#ff4757" : "#ff9f43";
+        }
+    }
+    if(e.key === 'Escape') switchWindow(activeWin.id === 'win-training' ? 'win-main-menu' : 'win-training');
+    if(e.key === 'Enter' && activeWin.id === 'win-training') verifyCaptcha();
 });
 
-function buySkin(n, p) {
-    if(gameState.ownedSkins.includes(n)) { 
-        gameState.activeSkin = n; 
-        alert("Надет!"); 
-    } else { 
-        if(gameState.balance < p) return alert("Мало ресурсов!"); 
-        gameState.balance -= p; 
-        gameState.ownedSkins.push(n); 
-        gameState.activeSkin = n; 
-    } 
+document.getElementById('captcha-input').addEventListener('input', () => {
+    if(!gameState.startTime && document.getElementById('captcha-input').value.length > 0) gameState.startTime = performance.now();
+});
+
+function openCasino() { switchWindow('win-casino'); }
+function playSlots() {
+    if(gameState.balance < 1000) return alert("Мало ресурсов!"); gameState.balance -= 1000;
+    const items = ['🍒', '🍋', '💎', '🔔', '7️⃣']; const r1 = items[Math.floor(Math.random()*5)], r2 = items[Math.floor(Math.random()*5)], r3 = items[Math.floor(Math.random()*5)];
+    alert(`[Слоты] Комбинация: [ ${r1} | ${r2} | ${r3} ]`);
+    if(r1 === r2 && r2 === r3) gameState.balance += (r1==='💎'||r1==='7️⃣') ? 25000 : 10000;
+    else if(r1===r2 || r2===r3 || r1===r3) gameState.balance += 2000; updateUI();
+}
+
+function playDice() {
+    if(gameState.balance < 5000) return alert("Мало ресурсов!"); gameState.balance -= 5000;
+    const p = Math.floor(Math.random()*6)+Math.floor(Math.random()*6)+2, d = Math.floor(Math.random()*6)+Math.floor(Math.random()*6)+2;
+    alert(`У вас: ${p}. У крупье: ${d}.`); if(p > d) gameState.balance += 10000; else if(p === d) gameState.balance += 5000; updateUI();
+}
+
+function playWheel() {
+    if(gameState.balance < 10000) return alert("Мало ресурсов!"); gameState.balance -= 10000;
+    const sectors = ['Ничего', 'XP-Бонус', '5,000 💎', 'Секретный Скин', '50,000 💎']; const w = sectors[Math.floor(Math.random()*5)];
+    alert(`Выпало: ${w}`); if(w==='5,000 💎') gameState.balance += 5000; if(w==='50,000 💎') gameState.balance += 50000;
+    if(w==='XP-Бонус') gameState.xp = Math.min(99, gameState.xp + 50); if(w==='Секретный Скин' && !gameState.ownedSkins.includes('Хулиган')) gameState.ownedSkins.push('Хулиган');
     updateUI();
 }
 
+function startDurakGame() {
+    const suits = ['♠','♣','♥','♦']; gameState.durakGame.deck = [];
+    for(let s of suits) { for(let v=6; v<=14; v++) gameState.durakGame.deck.push({suit:s, val:v}); }
+    gameState.durakGame.deck.sort(() => Math.random() - 0.5); gameState.durakGame.trump = suits[Math.floor(Math.random()*4)];
+    gameState.durakGame.player = gameState.durakGame.deck.splice(0, 6); gameState.durakGame.dealer = gameState.durakGame.deck.splice(0, 6);
+    renderDurak();
+}
+
+function renderDurak() {
+    document.getElementById('durak-trump').innerText = gameState.durakGame.trump;
+    document.getElementById('durak-dealer-cards').innerText = gameState.durakGame.dealer.map(c => `[${c.val}${c.suit}]`).join(' ');
+    document.getElementById('durak-player-cards').innerHTML = gameState.durakGame.player.map((c, i) => `<button onclick="playerChooseCard(${i})" style="background:#2d3345; color:#fff; border:1px solid #ff9f43; margin:2px; padding:4px 8px;">${c.val}${c.suit}</button>`).join('');
+}
+
+function playerChooseCard(i) {
+    let card = gameState.durakGame.player.splice(i, 1)[0];
+    document.getElementById('durak-table').innerText = `На столе: [${card.val}${card.suit}]`; renderDurak();
+}
+
+function durakAction(a) { gameState.balance += Math.random()>0.4 ? 15000 : 0; switchWindow('win-casino'); updateUI(); }
+document.addEventListener('click', (e) => { if(e.target.innerText && e.target.innerText.includes('Дурак')) { if(gameState.balance >= 5000) { gameState.balance -= 5000; startDurakGame(); } } });
+
+function buySkin(n, p) {if(gameState.ownedSkins.includes(n)) { gameState.activeSkin = n; alert("Надет!"); }
+else { if(gameState.balance < p) return alert("Мало ресурсов!"); gameState.balance -= p; gameState.ownedSkins.push(n); gameState.activeSkin = n; } updateUI();
+}
 function openCase(t, c) {
-    if(gameState.balance < c) return alert("Мало ресурсов!"); 
-    gameState.balance -= c;
-    let txt = t === 'Обычный' ? "+500 💎" : t === 'Серебряный' ? "+15,000 💎" : t === 'Золотой' ? "+250,000 💎" : "+3,000,000 💎";
-    if(t === 'Обычный') gameState.balance += 500; 
-    else if(t === 'Серебряный') gameState.balance += 15000; 
-    else if(t === 'Золотой') gameState.balance += 250000; 
-    else gameState.balance += 3000000;
-    document.getElementById('case-roll-result').innerText = `Выпало: ${txt}`; 
-    updateUI();
+if(gameState.balance < c) return alert("Мало ресурсов!"); gameState.balance -= c;
+let txt = t==='Обычный'? "+500 💎": t==='Серебряный'? "+15,000 💎": t==='Золотой'? "+250,000 💎": "+3,000,000 💎";
+if(t==='Обычный') gameState.balance+=500; else if(t==='Серебряный') gameState.balance+=15000; else if(t==='Золотой') gameState.balance+=250000; else gameState.balance+=3000000;
+document.getElementById('case-roll-result').innerText = Выпало: ${txt}; updateUI();
 }
-
 function handleBgUpload(input) {
-    if (input.files && input.files[0]) {
-        const r = new FileReader(); 
-        r.onload = (e) => { 
-            document.body.style.backgroundImage = `url('${e.target.result}')`; 
-            document.body.style.backgroundSize = 'cover'; 
-            localStorage.setItem('arz_bg_v2', e.target.result); 
-        };
-        r.readAsDataURL(input.files[0]);
-    }
+if (input.files && input.files[0]) {
+const r = new FileReader(); r.onload = (e) => { document.body.style.backgroundImage = url('${e.target.result}'); document.body.style.backgroundSize = 'cover'; localStorage.setItem('arz_bg_v2', e.target.result); };
+r.readAsDataURL(input.files[0]);
 }
-
-function resetBg() { 
-    document.body.style.backgroundImage = 'none'; 
-    localStorage.removeItem('arz_bg_v2'); 
 }
-
-if(localStorage.getItem('arz_bg_v2')) { 
-    document.body.style.backgroundImage = `url('${localStorage.getItem('arz_bg_v2')}')`; 
-    document.body.style.backgroundSize = 'cover'; 
-}
-
-function authAdmin() { 
-    if(document.getElementById('admin-pass-input').value === 'admin') { 
-        gameState.isAdmin = true; 
-        switchWindow('win-admin-panel'); 
-    } 
-}
-
-function adminGiveDiamonds() { 
-    gameState.balance += parseInt(document.getElementById('admin-cheat-diamonds').value) || 0; 
-    updateUI(); 
-}
-
-function adminToggleGodMode() { 
-    gameState.godMode = !gameState.godMode; 
-}
-
+function resetBg() { document.body.style.backgroundImage = 'none'; localStorage.removeItem('arz_bg_v2'); }
+if(localStorage.getItem('arz_bg_v2')) { document.body.style.backgroundImage = url('${localStorage.getItem('arz_bg_v2')}'); document.body.style.backgroundSize = 'cover'; }
+function authAdmin() { if(document.getElementById('admin-pass-input').value === 'admin') { gameState.isAdmin = true; switchWindow('win-admin-panel'); } }
+function adminGiveDiamonds() { gameState.balance += parseInt(document.getElementById('admin-cheat-diamonds').value) || 0; updateUI(); }
+function adminToggleGodMode() { gameState.godMode = !gameState.godMode; }
 function updateLeaderboard() {
-    let p = [
-        { name: "Horii_Shit", time: 0.412 }, 
-        { name: "Lovets_Bravyi", time: 0.520 }, 
-        { name: "Samp_Hacker", time: 0.680 }, 
-        { name: "Вы (Рекорд)", time: gameState.bestTime, isP: true }
-    ];
-    p.sort((a, b) => (a.time === null ? 1 : b.time === null ? -1 : a.time - b.time));
-    document.getElementById('leaderboard-rows').innerHTML = p.map((x, i) => `
-        <tr style="${x.isP ? 'background:rgba(255,159,67,0.15);' : ''}">
-            <td style="padding:8px;">${i+1}</td>
-            <td style="padding:8px;">${x.name}</td>
-            <td style="padding:8px;">${x.time ? x.time.toFixed(3) + ' с' : '--'}</td>
-        </tr>
-    `).join('');
+let p = [{ name: "Horii_Shit", time: 0.412 }, { name: "Lovets_Bravyi", time: 0.520 }, { name: "Samp_Hacker", time: 0.680 }, { name: "Вы (Рекорд)", time: gameState.bestTime, isP: true }];
+p.sort((a, b) => (a.time === null ? 1 : b.time === null ? -1 : a.time - b.time));
+document.getElementById('leaderboard-rows').innerHTML = p.map((x, i) => <tr style="${x.isP ? 'background:rgba(255,159,67,0.15);' : ''}"><td style="padding:8px;">${i+1}</td><td style="padding:8px;">${x.name}</td><td style="padding:8px;">${x.time ? x.time.toFixed(3)+' с' : '--'}</td></tr>).join('');
 }
-
 updateUI();
